@@ -2,13 +2,10 @@
   <!-- Dark background -->
   <rect width="512" height="512" rx="80" fill="#0f0900"/>
   
-  <!-- Top gradient accent bar -->
+  <!-- Border accents -->
   <rect x="0" y="0" width="512" height="10" rx="5" fill="url(#gradh)"/>
-  <!-- Left gradient accent bar -->
   <rect x="0" y="0" width="10" height="512" rx="5" fill="url(#gradv)"/>
-  <!-- Bottom gradient accent bar -->
   <rect x="0" y="502" width="512" height="10" rx="5" fill="url(#gradh)"/>
-  <!-- Right gradient accent bar -->
   <rect x="502" y="0" width="10" height="512" rx="5" fill="url(#gradv)"/>
 
   <defs>
@@ -22,15 +19,18 @@
     </linearGradient>
   </defs>
 
-  <!-- NoMi label at top -->
-  <text x="256" y="80" font-family="Courier New, monospace" font-size="32" fill="#FFC850" text-anchor="middle" letter-spacing="8">◈ NoMi ◈</text>
+  <!-- On Stage at top -->
+  <text x="256" y="90" font-family="Georgia, serif" font-size="72" font-weight="900" fill="#FFF8EE" text-anchor="middle" letter-spacing="-1">On Stage</text>
 
-  <!-- Guitar emoji centered with plenty of room -->
-  <text x="256" y="300" font-size="220" text-anchor="middle" dominant-baseline="middle">🎸</text>
+  <!-- Thin gold line under On Stage -->
+  <line x1="60" y1="108" x2="452" y2="108" stroke="url(#gradh)" stroke-width="2"/>
 
-  <!-- On Stage text at bottom -->
-  <text x="256" y="430" font-family="Georgia, serif" font-size="64" font-weight="900" fill="#FFF8EE" text-anchor="middle" letter-spacing="-1">On Stage</text>
+  <!-- Guitar truly centered in remaining space between lines -->
+  <text x="256" y="310" font-size="200" text-anchor="middle" dominant-baseline="middle">🎸</text>
 
-  <!-- Thin gold line under text -->
-  <line x1="80" y1="455" x2="432" y2="455" stroke="url(#gradh)" stroke-width="2"/>
+  <!-- Thin gold line above NoMi -->
+  <line x1="60" y1="415" x2="452" y2="415" stroke="url(#gradh)" stroke-width="2"/>
+
+  <!-- NoMi at bottom -->
+  <text x="256" y="468" font-family="Courier New, monospace" font-size="36" fill="#FFC850" text-anchor="middle" letter-spacing="8">◈ NoMi ◈</text>
 </svg>
