@@ -703,7 +703,7 @@ function SubmitForm({ onSubmit }) {
 
       <div style={{ marginTop: "8px", padding: "14px 18px", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,200,80,0.12)", borderRadius: "3px", textAlign: "center" }}>
         <span style={{ fontFamily: "'Lora',serif", fontSize: "13px", color: "#555", fontStyle: "italic" }}>Too lazy to fill this out? </span>
-        <a href="mailto:hello@onstage.com?subject=Post my show for me&body=Artist:%0D%0AVenue:%0D%0ACity:%0D%0ADate:%0D%0AStart Time:%0D%0AEnd Time:%0D%0AAbout the show:" style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FFC850", letterSpacing: "0.06em", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+        <a href="mailto:onstagenomi@gmail.com?subject=Post my show for me&body=Artist:%0D%0AVenue:%0D%0ACity:%0D%0ADate:%0D%0AStart Time:%0D%0AEnd Time:%0D%0AAbout the show:" style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FFC850", letterSpacing: "0.06em", textDecoration: "underline", textUnderlineOffset: "3px" }}>
           Send me the details and I'll post it for you →
         </a>
       </div>
