@@ -1091,32 +1091,32 @@ export default function App() {
 
         {/* Header */}
         <div style={{ textAlign: "center", padding: "48px 0 32px", position: "relative" }}>
-          <div style={{ position: "absolute", top: 0, right: 0, display: "flex", flexDirection: "column", gap: "5px", alignItems: "flex-end" }}>
-            <a href="https://support.apple.com/guide/iphone/bookmark-favorite-webpages-iph42ab2f3a7/ios#iph4f9a47bbc" target="_blank" rel="noopener noreferrer" style={{
-              fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.08em",
-              textTransform: "uppercase", color: "#FFC850", textDecoration: "none",
-              border: "1px solid #FFC850", borderRadius: "2px",
-              padding: "6px 10px", display: "flex", alignItems: "center", gap: "5px",
-              transition: "all 0.15s",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,200,80,0.1)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
-            >
-              🍎 Add to iPhone
-            </a>
-            <a href="https://support.google.com/chrome/answer/9658361" target="_blank" rel="noopener noreferrer" style={{
-              fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.08em",
-              textTransform: "uppercase", color: "#FFC850", textDecoration: "none",
-              border: "1px solid #FFC850", borderRadius: "2px",
-              padding: "6px 10px", display: "flex", alignItems: "center", gap: "5px",
-              transition: "all 0.15s",
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,200,80,0.1)"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
-            >
-              🤖 Add to Android
-            </a>
-          </div>
+          <a href="https://support.apple.com/guide/iphone/bookmark-favorite-webpages-iph42ab2f3a7/ios#iph4f9a47bbc" target="_blank" rel="noopener noreferrer" style={{
+            position: "absolute", top: 0, left: 0,
+            fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.08em",
+            textTransform: "uppercase", color: "#FFC850", textDecoration: "none",
+            border: "1px solid #FFC850", borderRadius: "2px",
+            padding: "6px 10px", display: "flex", alignItems: "center", gap: "5px",
+            transition: "all 0.15s",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,200,80,0.1)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+          >
+            🍎 Add to iPhone
+          </a>
+          <a href="https://support.google.com/chrome/answer/9658361" target="_blank" rel="noopener noreferrer" style={{
+            position: "absolute", top: 0, right: 0,
+            fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.08em",
+            textTransform: "uppercase", color: "#FFC850", textDecoration: "none",
+            border: "1px solid #FFC850", borderRadius: "2px",
+            padding: "6px 10px", display: "flex", alignItems: "center", gap: "5px",
+            transition: "all 0.15s",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,200,80,0.1)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+          >
+            🤖 Add to Android
+          </a>
           <div onClick={handleSecretTap} style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.25em", textTransform: "uppercase", color: "#FF6B35", marginBottom: "10px", cursor: "default", userSelect: "none" }}>◈ Northern Michigan ◈</div>
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(36px,8vw,56px)", fontWeight: "900", lineHeight: 1, color: "#FFF8EE", letterSpacing: "-0.01em" }}>On Stage</div>
           <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#777", fontStyle: "italic", marginTop: "8px" }}>Local music. Real venues. Northern Michigan.</div>
