@@ -1158,7 +1158,7 @@ export default function App() {
         </div>}
 
         {/* Board */}
-        {tab === "board" && (
+        {section === "music" && tab === "board" && (
           <div>
             {/* Sub-nav */}
             <div style={{ display: "flex", gap: "6px", marginBottom: "24px" }}>
@@ -1166,7 +1166,7 @@ export default function App() {
                 <button key={id} onClick={() => setBoardView(id)} style={{ background: boardView === id ? "rgba(255,200,80,0.12)" : "transparent", border: `1px solid ${boardView === id ? "#FFC850" : "rgba(255,255,255,0.1)"}`, borderRadius: "2px", color: boardView === id ? "#FFC850" : "#555", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.07em", textTransform: "uppercase", padding: "7px 14px", cursor: "pointer", transition: "all 0.15s" }}>{label}</button>
               ))}
             </div>
-            {section === "music" && boardView === "today" && <TodayView gigs={approved} />}
+            {boardView === "today" && <TodayView gigs={approved} />}
             {boardView === "weekend" && <WeekendView gigs={approved} />}
             {boardView === "list" && <ListView gigs={approved} />}
             {boardView === "calendar" && <CalendarView gigs={approved} />}
@@ -1178,7 +1178,7 @@ export default function App() {
         )}
 
         {/* Submit */}
-        {tab === "submit" && section === "music" && (
+        {section === "music" && tab === "submit" && (
           <div>
             <div style={{ marginBottom: "24px" }}>
               <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", color: "#FFF8EE", marginBottom: "6px" }}>Post Your Shows</div>
@@ -1189,7 +1189,7 @@ export default function App() {
         )}
 
         {/* Admin */}
-        {tab === "admin" && section === "music" && (
+        {section === "music" && tab === "admin" && (
           <div>
             {!adminUnlocked ? (
               <div style={{ maxWidth: "300px", margin: "0 auto", paddingTop: "20px" }}>
