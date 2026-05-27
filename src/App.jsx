@@ -1142,9 +1142,7 @@ export default function App() {
               <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#666", fontStyle: "italic", lineHeight: 1.7 }}>
                 We're building this out for Northern Michigan.<br />Know about {SECTIONS.find(s => s.id === section)?.label.toLowerCase()} events around here?
               </div>
-              <button onClick={() => { setSection("music"); setTab("submit"); }} style={{ marginTop: "20px", background: "transparent", border: "1px solid #FFC850", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", padding: "9px 22px", cursor: "pointer", borderRadius: "2px", display: "block", margin: "20px auto 0" }}>
-                Be the first to post →
-              </button>
+
             </div>
           </div>
         )}
