@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 
-const ADMIN_PASSWORD = "northernmi2026";
+const ADMIN_PASSWORD = "696969";
 const POSTER_TYPES = ["Musician / Band", "Venue", "Booking Agent", "Groupie"];
 const CITIES = [
   "Traverse City",
@@ -1091,19 +1091,32 @@ export default function App() {
 
         {/* Header */}
         <div style={{ textAlign: "center", padding: "48px 0 32px", position: "relative" }}>
-          <a href="https://support.apple.com/guide/iphone/bookmark-favorite-webpages-iph42ab2f3a7/ios#iph4f9a47bbc" target="_blank" rel="noopener noreferrer" style={{
-            position: "absolute", top: 0, right: 0,
-            fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.08em",
-            textTransform: "uppercase", color: "#666", textDecoration: "none",
-            border: "1px solid rgba(255,200,80,0.2)", borderRadius: "2px",
-            padding: "6px 10px", display: "flex", alignItems: "center", gap: "5px",
-            transition: "all 0.15s",
-          }}
-            onMouseEnter={e => { e.currentTarget.style.color = "#FFC850"; e.currentTarget.style.borderColor = "rgba(255,200,80,0.5)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "#666"; e.currentTarget.style.borderColor = "rgba(255,200,80,0.2)"; }}
-          >
-            📱 Add to Phone
-          </a>
+          <div style={{ position: "absolute", top: 0, right: 0, display: "flex", flexDirection: "column", gap: "5px", alignItems: "flex-end" }}>
+            <a href="https://support.apple.com/guide/iphone/bookmark-favorite-webpages-iph42ab2f3a7/ios#iph4f9a47bbc" target="_blank" rel="noopener noreferrer" style={{
+              fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.08em",
+              textTransform: "uppercase", color: "#FFC850", textDecoration: "none",
+              border: "1px solid #FFC850", borderRadius: "2px",
+              padding: "6px 10px", display: "flex", alignItems: "center", gap: "5px",
+              transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,200,80,0.1)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+            >
+              🍎 Add to iPhone
+            </a>
+            <a href="https://support.google.com/chrome/answer/9658361" target="_blank" rel="noopener noreferrer" style={{
+              fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.08em",
+              textTransform: "uppercase", color: "#FFC850", textDecoration: "none",
+              border: "1px solid #FFC850", borderRadius: "2px",
+              padding: "6px 10px", display: "flex", alignItems: "center", gap: "5px",
+              transition: "all 0.15s",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,200,80,0.1)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+            >
+              🤖 Add to Android
+            </a>
+          </div>
           <div onClick={handleSecretTap} style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.25em", textTransform: "uppercase", color: "#FF6B35", marginBottom: "10px", cursor: "default", userSelect: "none" }}>◈ Northern Michigan ◈</div>
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(36px,8vw,56px)", fontWeight: "900", lineHeight: 1, color: "#FFF8EE", letterSpacing: "-0.01em" }}>On Stage</div>
           <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#777", fontStyle: "italic", marginTop: "8px" }}>Local music. Real venues. Northern Michigan.</div>
@@ -1190,7 +1203,7 @@ export default function App() {
                 />
                 {adminError && <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FF6B35", marginBottom: "8px" }}>Incorrect password.</div>}
                 <button onClick={() => { if (adminPass === ADMIN_PASSWORD) setAdminUnlocked(true); else setAdminError(true); }} style={{ width: "100%", background: "linear-gradient(135deg,#FFC850,#FF6B35)", border: "none", borderRadius: "2px", color: "#1a0e00", fontFamily: "'Courier Prime',monospace", fontWeight: "700", letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "13px", padding: "12px", cursor: "pointer" }}>Enter →</button>
-                <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#333", textAlign: "center", marginTop: "12px" }}>Demo password: northernmi2026</div>
+
               </div>
             ) : (
               <div>
