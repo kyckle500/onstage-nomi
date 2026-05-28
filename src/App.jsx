@@ -668,7 +668,7 @@ function SubmitForm({ onSubmit }) {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
               <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555", letterSpacing: "0.1em", textTransform: "uppercase" }}>Show {idx + 1}</div>
               <div style={{ display: "flex", gap: "8px" }}>
-                <button onClick={() => addShow(show.id)} title="Copy venue, time & details — just pick a new date" style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.2)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "4px 10px", cursor: "pointer" }}>+ Copy Date</button>
+                <button onClick={() => addShow(show.id)} title="Copy venue, time & details — just pick a new date" style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.2)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "4px 10px", cursor: "pointer" }}>+ Copy Event</button>
                 {shows.length > 1 && <button onClick={() => removeShow(show.id)} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "2px", color: "#555", fontFamily: "'Courier Prime',monospace", fontSize: "10px", padding: "4px 10px", cursor: "pointer" }}>Remove</button>}
               </div>
             </div>
@@ -1182,7 +1182,7 @@ export default function App() {
           <div>
             <div style={{ marginBottom: "24px" }}>
               <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", color: "#FFF8EE", marginBottom: "6px" }}>Post Your Shows</div>
-              <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#666", lineHeight: 1.6 }}>Add one show or your whole summer. Use "+ Copy" to duplicate a show and just change the date.</div>
+              <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#666", lineHeight: 1.6 }}>Add one show or your whole summer. Use "+ Copy Event" to duplicate a show and just change the date.</div>
             </div>
             <SubmitForm onSubmit={handleSubmit} />
           </div>
