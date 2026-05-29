@@ -90,7 +90,13 @@ function GigCard({ gig, compact = false }) {
         </div>
         <div style={{ textAlign: "right", flexShrink: 0 }}>
           {!compact && <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#888" }}>{formatDate(gig.date)}</div>}
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: compact ? "15px" : "18px", color: "#FF6B35", fontWeight: "700" }}>{formatTime(gig.time)}</div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "2px" }}>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: compact ? "14px" : "17px", color: "#FF6B35", fontWeight: "700" }}>{formatTime(gig.time)}</div>
+            {(gig.endTime || gig.endtime) && <>
+              <div style={{ width: "2px", height: "8px", background: "#FF6B35", borderRadius: "1px", alignSelf: "flex-end", marginRight: "2px" }} />
+              <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: compact ? "11px" : "12px", color: "#FF6B35", opacity: 0.7 }}>{formatTime(gig.endTime || gig.endtime)}</div>
+            </>}
+          </div>
         </div>
       </div>
       {gig.description && !compact && <div style={{ fontFamily: "'Lora',serif", fontSize: "13px", color: "#bbb", lineHeight: 1.6 }}>{gig.description}</div>}
@@ -409,9 +415,21 @@ function DateField({ value, onChange, inputStyle, labelStyle }) {
 
   const selStyle = { ...inputStyle, flex: 1, cursor: "pointer", minWidth: 0 };
 
+  const setToday = () => {
+    const t = new Date();
+    const m = String(t.getMonth() + 1).padStart(2, "0");
+    const d = String(t.getDate()).padStart(2, "0");
+    const y = String(t.getFullYear());
+    setSelMonth(m); setSelDay(d); setSelYear(y);
+    onChange(`${y}-${m}-${d}`);
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <label style={labelStyle}>Date</label>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "5px" }}>
+        <label style={labelStyle}>Date</label>
+        <button onClick={setToday} style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", cursor: "pointer" }}>Today</button>
+      </div>
       <div style={{ display: "flex", gap: "6px" }}>
         <select value={selMonth} onChange={e => handleMonth(e.target.value)} style={{ ...selStyle, flex: 2 }}>
           <option value="" style={{ background: "#1a1208" }}>Month</option>
@@ -574,13 +592,21 @@ function SubmitForm({ onSubmit }) {
     }
   };
 
+  const [errors, setErrors] = useState([]);
+  const [bypass, setBypass] = useState(false);
+
   const handleSubmit = () => {
-    if (!artist || !posterName || !posterEmail) return;
+    const errs = [];
+    if (!posterName) errs.push("Your name is required");
+    if (!posterEmail) errs.push("Your email is required");
+    if (!artist) errs.push("Artist / Band name is required");
     const valid = shows.filter(s => s.venue && s.date && s.time);
-    if (valid.length === 0) return;
+    if (valid.length === 0) errs.push("At least one show needs a venue, date, and start time");
+    if (errs.length > 0) { setErrors(errs); return; }
+    setErrors([]);
     const batchId = `batch-${Date.now()}`;
     valid.forEach(s => {
-      onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), status: "pending", duplicateFlag: false, batchId });
+      onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), status: bypass ? "approved" : "pending", duplicateFlag: false, batchId });
     });
     setSubmitted(true);
   };
@@ -709,9 +735,20 @@ function SubmitForm({ onSubmit }) {
         </button>
       </div>
 
+      {errors.length > 0 && (
+        <div style={{ background: "rgba(255,107,53,0.1)", border: "1px solid rgba(255,107,53,0.4)", borderRadius: "3px", padding: "12px 16px" }}>
+          {errors.map((e, i) => (
+            <div key={i} style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FF6B35", letterSpacing: "0.05em", marginBottom: i < errors.length - 1 ? "6px" : "0" }}>⚠ {e}</div>
+          ))}
+        </div>
+      )}
       <button onClick={handleSubmit} style={{ background: "linear-gradient(135deg,#FFC850,#FF6B35)", border: "none", borderRadius: "2px", color: "#1a0e00", fontFamily: "'Courier Prime',monospace", fontWeight: "700", letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "13px", padding: "14px", cursor: "pointer" }}>
         Submit {shows.length > 1 ? `${shows.length} Shows` : "Show"} →
       </button>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "center" }}>
+        <input type="checkbox" id="bypass" checked={bypass} onChange={e => setBypass(e.target.checked)} style={{ cursor: "pointer", accentColor: "#FFC850" }} />
+        <label htmlFor="bypass" style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#666", letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Post directly (admin only)</label>
+      </div>
       <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#444", textAlign: "center" }}>Reviewed before going live · Email never shown publicly</div>
 
       <div style={{ marginTop: "8px", padding: "14px 18px", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,200,80,0.12)", borderRadius: "3px", textAlign: "center" }}>
