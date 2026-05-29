@@ -593,7 +593,6 @@ function SubmitForm({ onSubmit }) {
   };
 
   const [errors, setErrors] = useState([]);
-  const [bypass, setBypass] = useState(false);
 
   const handleSubmit = () => {
     const errs = [];
@@ -606,7 +605,7 @@ function SubmitForm({ onSubmit }) {
     setErrors([]);
     const batchId = `batch-${Date.now()}`;
     valid.forEach(s => {
-      onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), status: bypass ? "approved" : "pending", duplicateFlag: false, batchId });
+      onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), status: "pending", duplicateFlag: false, batchId });
     });
     setSubmitted(true);
   };
@@ -745,10 +744,7 @@ function SubmitForm({ onSubmit }) {
       <button onClick={handleSubmit} style={{ background: "linear-gradient(135deg,#FFC850,#FF6B35)", border: "none", borderRadius: "2px", color: "#1a0e00", fontFamily: "'Courier Prime',monospace", fontWeight: "700", letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "13px", padding: "14px", cursor: "pointer" }}>
         Submit {shows.length > 1 ? `${shows.length} Shows` : "Show"} →
       </button>
-      <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "center" }}>
-        <input type="checkbox" id="bypass" checked={bypass} onChange={e => setBypass(e.target.checked)} style={{ cursor: "pointer", accentColor: "#FFC850" }} />
-        <label htmlFor="bypass" style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#666", letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}>Post directly (admin only)</label>
-      </div>
+
       <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#444", textAlign: "center" }}>Reviewed before going live · Email never shown publicly</div>
 
       <div style={{ marginTop: "8px", padding: "14px 18px", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,200,80,0.12)", borderRadius: "3px", textAlign: "center" }}>
@@ -1161,7 +1157,7 @@ export default function App() {
       posterType: gig.posterType,
       posterName: gig.posterName,
       posterEmail: gig.posterEmail,
-      status: bypass ? "approved" : "pending",
+      status: "pending",
       batchId: gig.batchId || "",
       duplicateFlag: isDupe,
       duplicateOf: dupeOf || null,
