@@ -1102,10 +1102,25 @@ export default function App() {
   const handleSubmit = async (gig) => {
     const isDupe = gigs.some(g => g.status === "approved" && g.artist.toLowerCase() === gig.artist.toLowerCase() && g.venue.toLowerCase() === gig.venue.toLowerCase() && g.date === gig.date);
     const dupeOf = isDupe ? gigs.find(g => g.status === "approved" && g.artist.toLowerCase() === gig.artist.toLowerCase() && g.venue.toLowerCase() === gig.venue.toLowerCase() && g.date === gig.date)?.id : null;
-    const newGig = { ...gig, duplicateFlag: isDupe, duplicateOf: dupeOf };
-    delete newGig.id; // let Supabase generate the id
+    const newGig = {
+      artist: gig.artist,
+      venue: gig.venue,
+      city: gig.city,
+      date: gig.date,
+      time: gig.time,
+      endtime: gig.endTime || "",
+      description: gig.description || "",
+      postertype: gig.posterType,
+      postername: gig.posterName,
+      posteremail: gig.posterEmail,
+      status: "pending",
+      batchid: gig.batchId || "",
+      duplicateflag: isDupe,
+      duplicateof: dupeOf || null,
+    };
     const { data, error } = await supabase.from("shows").insert([newGig]).select();
-    if (!error && data) setGigs(prev => [...prev, ...data]);
+    if (error) { console.error("Supabase insert error:", error); alert("Submit failed: " + error.message); return; }
+    if (data) setGigs(prev => [...prev, ...data.map(d => ({ ...d, endTime: d.endtime, posterType: d.postertype, posterName: d.postername, posterEmail: d.posteremail, batchId: d.batchid, duplicateFlag: d.duplicateflag, duplicateOf: d.duplicateof }))]);
   };
   const handleApprove = async (id) => {
     await supabase.from("shows").update({ status: "approved", duplicateFlag: false }).eq("id", id);
