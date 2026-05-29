@@ -1094,13 +1094,13 @@ export default function App() {
   // Load gigs from Supabase on mount
   const mapGig = (d) => ({
     ...d,
-    endTime: d.endTime || "",
-    posterType: d.posterType || "",
-    posterName: d.posterName || "",
-    posterEmail: d.posterEmail || "",
-    batchId: d.batchId || "",
-    duplicateFlag: d.duplicateFlag || false,
-    duplicateOf: d.duplicateOf || null,
+    endTime: d.endTime || d.endtime || "",
+    posterType: d.posterType || d.postertype || "",
+    posterName: d.posterName || d.postername || "",
+    posterEmail: d.posterEmail || d.posteremail || "",
+    batchId: d.batchId || d.batchid || "",
+    duplicateFlag: d.duplicateFlag ?? d.duplicateflag ?? false,
+    duplicateOf: d.duplicateOf || d.duplicateof || null,
   });
 
   useEffect(() => {
