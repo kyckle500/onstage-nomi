@@ -84,11 +84,11 @@ function GigCard({ gig, compact = false }) {
     >
       <div style={{ position: "absolute", top: 0, left: 0, width: "3px", height: "100%", background: "linear-gradient(180deg,#FFC850,#FF6B35)" }} />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
-        <div>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: compact ? "16px" : "20px", fontWeight: "700", color: "#FFF8EE", lineHeight: 1.2 }}>{gig.artist}</div>
-          <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850", marginTop: "3px" }}>{gig.venue} · {gig.city}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: compact ? "16px" : "20px", fontWeight: "700", color: "#FFF8EE", lineHeight: 1.2, wordBreak: "break-word" }}>{gig.artist}</div>
+          <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850", marginTop: "3px", wordBreak: "break-word" }}>{gig.venue} · {gig.city}</div>
         </div>
-        <div style={{ textAlign: "right", flexShrink: 0 }}>
+        <div style={{ textAlign: "right", flexShrink: 0, minWidth: "80px" }}>
           {!compact && <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#888" }}>{formatDate(gig.date)}</div>}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "2px" }}>
             <div style={{ fontFamily: "'Playfair Display',serif", fontSize: compact ? "14px" : "17px", color: "#FF6B35", fontWeight: "700" }}>{formatTime(gig.time)}</div>
@@ -762,7 +762,8 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onMerge, onBatchAppro
   const pending = gigs.filter(g => g.status === "pending");
   const flagged = pending.filter(g => g.duplicateFlag);
   const clean = pending.filter(g => !g.duplicateFlag);
-  const approved = gigs.filter(g => g.status === "approved");
+  const today = new Date().toISOString().split("T")[0];
+  const approved = gigs.filter(g => g.status === "approved" && g.date >= today);
 
   // Group clean pending by batchId
   const batches = clean.reduce((acc, g) => { const k = g.batchId || g.id; if (!acc[k]) acc[k] = []; acc[k].push(g); return acc; }, {});
@@ -1139,7 +1140,8 @@ export default function App() {
     }
   };
 
-  const approved = gigs.filter(g => g.status === "approved");
+  const today = new Date().toISOString().split("T")[0];
+  const approved = gigs.filter(g => g.status === "approved" && g.date >= today);
   const pendingCount = gigs.filter(g => g.status === "pending").length;
   const flaggedCount = gigs.filter(g => g.status === "pending" && g.duplicateFlag).length;
 
