@@ -1091,20 +1091,20 @@ function GarageSaleSection() {
 export default function App() {
   const [section, setSection] = useState("music");
   const [tab, setTab] = useState("board");
-  const [boardView, setBoardView] = useState("weekend");
+  const [boardView, setBoardView] = useState("today");
   const [gigs, setGigs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Load gigs from Supabase on mount
   const mapGig = (d) => ({
     ...d,
-    endTime: d.endtime || "",
-    posterType: d.postertype || "",
-    posterName: d.postername || "",
-    posterEmail: d.posteremail || "",
-    batchId: d.batchid || "",
-    duplicateFlag: d.duplicateflag || false,
-    duplicateOf: d.duplicateof || null,
+    endTime: d.endTime || "",
+    posterType: d.posterType || "",
+    posterName: d.posterName || "",
+    posterEmail: d.posterEmail || "",
+    batchId: d.batchId || "",
+    duplicateFlag: d.duplicateFlag || false,
+    duplicateOf: d.duplicateOf || null,
   });
 
   useEffect(() => {
@@ -1156,22 +1156,22 @@ export default function App() {
       city: gig.city,
       date: gig.date,
       time: gig.time,
-      endtime: gig.endTime || "",
+      endTime: gig.endTime || "",
       description: gig.description || "",
-      postertype: gig.posterType,
-      postername: gig.posterName,
-      posteremail: gig.posterEmail,
-      status: "pending",
-      batchid: gig.batchId || "",
-      duplicateflag: isDupe,
-      duplicateof: dupeOf || null,
+      posterType: gig.posterType,
+      posterName: gig.posterName,
+      posterEmail: gig.posterEmail,
+      status: bypass ? "approved" : "pending",
+      batchId: gig.batchId || "",
+      duplicateFlag: isDupe,
+      duplicateOf: dupeOf || null,
     };
     const { data, error } = await supabase.from("shows").insert([newGig]).select();
     if (error) { console.error("Supabase insert error:", error); alert("Submit failed: " + error.message); return; }
     if (data) setGigs(prev => [...prev, ...data.map(d => ({ ...d, endTime: d.endtime, posterType: d.postertype, posterName: d.postername, posterEmail: d.posteremail, batchId: d.batchid, duplicateFlag: d.duplicateflag, duplicateOf: d.duplicateof }))]);
   };
   const handleApprove = async (id) => {
-    await supabase.from("shows").update({ status: "approved", duplicateflag: false }).eq("id", id);
+    await supabase.from("shows").update({ status: "approved", duplicateFlag: false }).eq("id", id);
     setGigs(prev => prev.map(g => g.id === id ? { ...g, status: "approved", duplicateFlag: false } : g));
   };
   const handleBatchApprove = async (ids) => {
