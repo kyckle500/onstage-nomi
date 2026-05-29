@@ -553,13 +553,20 @@ function SubmitForm({ onSubmit }) {
     const source = copyFrom ? shows.find(s => s.id === copyFrom) : null;
     const base = source
       ? { ...source, id: Date.now(), date: "" }
-      : { id: Date.now(), venue: "", city: "", date: "", time: "", endTime: "", description: "" };
+      : { id: Date.now(), venue: posterType === "Venue" ? posterName : "", city: "", date: "", time: "", endTime: "", description: "" };
     setShows(prev => [...prev, base]);
-    // Scroll to bottom so user sees the new show
     setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }), 50);
   };
   const removeShow = (id) => setShows(prev => prev.filter(s => s.id !== id));
   const updateShow = (id, field, value) => setShows(prev => prev.map(s => s.id === id ? { ...s, [field]: value } : s));
+
+  // When poster is a Venue and they type their name, auto-fill venue field in all shows
+  const handlePosterNameChange = (val) => {
+    setPosterName(val);
+    if (posterType === "Venue") {
+      setShows(prev => prev.map(s => ({ ...s, venue: val })));
+    }
+  };
 
   const handleSubmit = () => {
     if (!artist || !posterName || !posterEmail) return;
@@ -650,7 +657,7 @@ function SubmitForm({ onSubmit }) {
       <div style={{ height: "1px", background: "rgba(255,200,80,0.08)" }} />
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-        <FormField label={pl.contact} value={posterName} onChange={setPosterName} />
+        <FormField label={pl.contact} value={posterName} onChange={handlePosterNameChange} />
         <FormField label={pl.email} value={posterEmail} onChange={setPosterEmail} type="email" />
       </div>
       <FormField label={pl.name} value={artist} onChange={setArtist} />
