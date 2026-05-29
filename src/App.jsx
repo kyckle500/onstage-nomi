@@ -1,4 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 const ADMIN_PASSWORD = "696969";
 const POSTER_TYPES = ["Musician / Band", "Venue", "Booking Agent", "Groupie"];
@@ -1049,7 +1055,21 @@ export default function App() {
   const [section, setSection] = useState("music");
   const [tab, setTab] = useState("board");
   const [boardView, setBoardView] = useState("weekend");
-  const [gigs, setGigs] = useState(SAMPLE_GIGS);
+  const [gigs, setGigs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load gigs from Supabase on mount
+  useEffect(() => {
+    const loadGigs = async () => {
+      const { data, error } = await supabase
+        .from("shows")
+        .select("*")
+        .order("date", { ascending: true });
+      if (!error && data) setGigs(data);
+      setLoading(false);
+    };
+    loadGigs();
+  }, []);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
   const [adminPass, setAdminPass] = useState("");
   const [adminError, setAdminError] = useState(false);
@@ -1079,16 +1099,34 @@ export default function App() {
   const pendingCount = gigs.filter(g => g.status === "pending").length;
   const flaggedCount = gigs.filter(g => g.status === "pending" && g.duplicateFlag).length;
 
-  const handleSubmit = (gig) => {
+  const handleSubmit = async (gig) => {
     const isDupe = gigs.some(g => g.status === "approved" && g.artist.toLowerCase() === gig.artist.toLowerCase() && g.venue.toLowerCase() === gig.venue.toLowerCase() && g.date === gig.date);
     const dupeOf = isDupe ? gigs.find(g => g.status === "approved" && g.artist.toLowerCase() === gig.artist.toLowerCase() && g.venue.toLowerCase() === gig.venue.toLowerCase() && g.date === gig.date)?.id : null;
-    setGigs(prev => [...prev, { ...gig, duplicateFlag: isDupe, duplicateOf: dupeOf }]);
+    const newGig = { ...gig, duplicateFlag: isDupe, duplicateOf: dupeOf };
+    delete newGig.id; // let Supabase generate the id
+    const { data, error } = await supabase.from("shows").insert([newGig]).select();
+    if (!error && data) setGigs(prev => [...prev, ...data]);
   };
-  const handleApprove = (id) => setGigs(prev => prev.map(g => g.id === id ? { ...g, status: "approved", duplicateFlag: false } : g));
-  const handleBatchApprove = (ids) => setGigs(prev => prev.map(g => ids.includes(g.id) ? { ...g, status: "approved", duplicateFlag: false } : g));
-  const handleReject = (id) => setGigs(prev => prev.filter(g => g.id !== id));
-  const handleDelete = (id) => setGigs(prev => prev.filter(g => g.id !== id));
-  const handleMerge = (id) => setGigs(prev => prev.filter(g => g.id !== id));
+  const handleApprove = async (id) => {
+    await supabase.from("shows").update({ status: "approved", duplicateFlag: false }).eq("id", id);
+    setGigs(prev => prev.map(g => g.id === id ? { ...g, status: "approved", duplicateFlag: false } : g));
+  };
+  const handleBatchApprove = async (ids) => {
+    await supabase.from("shows").update({ status: "approved", duplicateFlag: false }).in("id", ids);
+    setGigs(prev => prev.map(g => ids.includes(g.id) ? { ...g, status: "approved", duplicateFlag: false } : g));
+  };
+  const handleReject = async (id) => {
+    await supabase.from("shows").delete().eq("id", id);
+    setGigs(prev => prev.filter(g => g.id !== id));
+  };
+  const handleDelete = async (id) => {
+    await supabase.from("shows").delete().eq("id", id);
+    setGigs(prev => prev.filter(g => g.id !== id));
+  };
+  const handleMerge = async (id) => {
+    await supabase.from("shows").delete().eq("id", id);
+    setGigs(prev => prev.filter(g => g.id !== id));
+  };
 
   const VIEW_TABS = [["today", "Today"], ["weekend", "Next 3 Days"], ["list", "All Shows"], ["calendar", "Calendar"]];
 
@@ -1167,6 +1205,8 @@ export default function App() {
         {/* Board */}
         {section === "music" && tab === "board" && (
           <div>
+            {loading && <div style={{ textAlign: "center", padding: "60px 0", fontFamily: "'Lora',serif", color: "#555", fontStyle: "italic" }}>Loading shows...</div>}
+            {!loading && <>
             {/* Sub-nav */}
             <div style={{ display: "flex", gap: "6px", marginBottom: "24px" }}>
               {VIEW_TABS.map(([id, label]) => (
@@ -1181,6 +1221,7 @@ export default function App() {
               Playing a show?{" "}
               <button onClick={() => setTab("submit")} style={{ background: "none", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", textDecoration: "underline" }}>Post it here →</button>
             </div>
+            </>}
           </div>
         )}
 
