@@ -1096,13 +1096,24 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   // Load gigs from Supabase on mount
+  const mapGig = (d) => ({
+    ...d,
+    endTime: d.endtime || "",
+    posterType: d.postertype || "",
+    posterName: d.postername || "",
+    posterEmail: d.posteremail || "",
+    batchId: d.batchid || "",
+    duplicateFlag: d.duplicateflag || false,
+    duplicateOf: d.duplicateof || null,
+  });
+
   useEffect(() => {
     const loadGigs = async () => {
       const { data, error } = await supabase
         .from("shows")
         .select("*")
         .order("date", { ascending: true });
-      if (!error && data) setGigs(data);
+      if (!error && data) setGigs(data.map(mapGig));
       setLoading(false);
     };
     loadGigs();
@@ -1160,7 +1171,7 @@ export default function App() {
     if (data) setGigs(prev => [...prev, ...data.map(d => ({ ...d, endTime: d.endtime, posterType: d.postertype, posterName: d.postername, posterEmail: d.posteremail, batchId: d.batchid, duplicateFlag: d.duplicateflag, duplicateOf: d.duplicateof }))]);
   };
   const handleApprove = async (id) => {
-    await supabase.from("shows").update({ status: "approved", duplicateFlag: false }).eq("id", id);
+    await supabase.from("shows").update({ status: "approved", duplicateflag: false }).eq("id", id);
     setGigs(prev => prev.map(g => g.id === id ? { ...g, status: "approved", duplicateFlag: false } : g));
   };
   const handleBatchApprove = async (ids) => {
