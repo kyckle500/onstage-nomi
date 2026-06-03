@@ -758,7 +758,132 @@ function SubmitForm({ onSubmit }) {
 }
 
 // ── ADMIN PANEL ───────────────────────────────────────────
-function AdminPanel({ gigs, onApprove, onReject, onDelete, onMerge, onBatchApprove }) {
+
+function AdminPostForm({ onPost }) {
+  const [artist, setArtist] = useState("");
+  const [venue, setVenue] = useState("");
+  const [city, setCity] = useState("");
+  const [date, setDate] = useState({ month: "", day: "", year: String(new Date().getFullYear()) });
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [description, setDescription] = useState("");
+  const [posted, setPosted] = useState(false);
+
+  const handlePost = () => {
+    if (!artist) return;
+    const dateStr = date.month && date.day ? `${date.year}-${date.month}-${date.day}` : "";
+    const show = {
+      artist,
+      venue: venue || "TBD",
+      city: city || "Traverse City",
+      date: dateStr,
+      time: startTime || "19:00",
+      endTime: endTime || "",
+      description,
+      posterType: "Venue",
+      posterName: "On Stage NoMi",
+      posterEmail: "onstagenomi@gmail.com",
+      status: "approved",
+      batchId: `admin-${Date.now()}`,
+      duplicateFlag: false,
+    };
+    onPost(show);
+    setArtist(""); setVenue(""); setCity(""); setDate({ month: "", day: "", year: String(new Date().getFullYear()) }); setStartTime(""); setEndTime(""); setDescription("");
+    setPosted(true);
+    setTimeout(() => setPosted(false), 3000);
+  };
+
+  const MONTHS = [
+    { val: "01", label: "Jan" }, { val: "02", label: "Feb" }, { val: "03", label: "Mar" },
+    { val: "04", label: "Apr" }, { val: "05", label: "May" }, { val: "06", label: "Jun" },
+    { val: "07", label: "Jul" }, { val: "08", label: "Aug" }, { val: "09", label: "Sep" },
+    { val: "10", label: "Oct" }, { val: "11", label: "Nov" }, { val: "12", label: "Dec" },
+  ];
+  const daysInMonth = date.month ? new Date(parseInt(date.year), parseInt(date.month), 0).getDate() : 31;
+  const DAYS = Array.from({ length: daysInMonth }, (_, i) => String(i + 1).padStart(2, "0"));
+  const YEARS = [new Date().getFullYear(), new Date().getFullYear() + 1].map(String);
+  const endOpts = getEndOptions(startTime);
+
+  const IS = { ...FORM_INPUT_STYLE, fontSize: "13px", height: "38px", padding: "0 10px" };
+  const LS = { ...FORM_LABEL_STYLE, fontSize: "9px" };
+
+  return (
+    <div style={{ background: "rgba(255,200,80,0.05)", border: "1px solid rgba(255,200,80,0.2)", borderRadius: "3px", padding: "20px", marginBottom: "28px" }}>
+      <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#FFC850", marginBottom: "16px" }}>
+        ⚡ Post Directly — Goes Live Instantly
+      </div>
+
+      {posted && (
+        <div style={{ background: "rgba(255,200,80,0.1)", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", padding: "10px 14px", marginBottom: "14px", fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FFC850" }}>
+          ✓ Show posted and live!
+        </div>
+      )}
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div>
+          <label style={LS}>Artist / Band *</label>
+          <input value={artist} onChange={e => setArtist(e.target.value)} placeholder="Required" style={IS} onFocus={e => e.target.style.borderColor="#FFC850"} onBlur={e => e.target.style.borderColor="rgba(255,200,80,0.22)"} />
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+          <div>
+            <label style={LS}>Venue</label>
+            <input value={venue} onChange={e => setVenue(e.target.value)} placeholder="Optional" style={IS} onFocus={e => e.target.style.borderColor="#FFC850"} onBlur={e => e.target.style.borderColor="rgba(255,200,80,0.22)"} />
+          </div>
+          <CityField value={city} onChange={setCity} />
+        </div>
+
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "5px" }}>
+            <label style={LS}>Date</label>
+            <button onClick={() => { const t = new Date(); const m = String(t.getMonth()+1).padStart(2,"0"); const d = String(t.getDate()).padStart(2,"0"); setDate({ month: m, day: d, year: String(t.getFullYear()) }); }} style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", padding: "2px 7px", cursor: "pointer" }}>Today</button>
+          </div>
+          <div style={{ display: "flex", gap: "6px" }}>
+            <select value={date.month} onChange={e => setDate(d => ({...d, month: e.target.value}))} style={{ ...IS, flex: 2, cursor: "pointer" }}>
+              <option value="">Month</option>
+              {MONTHS.map(m => <option key={m.val} value={m.val} style={{ background: "#1a1208" }}>{m.label}</option>)}
+            </select>
+            <select value={date.day} onChange={e => setDate(d => ({...d, day: e.target.value}))} style={{ ...IS, flex: 1, cursor: "pointer" }}>
+              <option value="">Day</option>
+              {DAYS.map(d => <option key={d} value={d} style={{ background: "#1a1208" }}>{parseInt(d)}</option>)}
+            </select>
+            <select value={date.year} onChange={e => setDate(d => ({...d, year: e.target.value}))} style={{ ...IS, flex: 1, cursor: "pointer" }}>
+              {YEARS.map(y => <option key={y} value={y} style={{ background: "#1a1208" }}>{y}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+          <div>
+            <label style={LS}>Start Time</label>
+            <select value={startTime} onChange={e => setStartTime(e.target.value)} style={{ ...IS, cursor: "pointer" }}>
+              <option value="">Optional</option>
+              {START_OPTIONS.map(o => <option key={o.val} value={o.val} style={{ background: "#1a1208" }}>{o.label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={LS}>End Time</label>
+            <select value={endTime} onChange={e => setEndTime(e.target.value)} style={{ ...IS, cursor: "pointer" }}>
+              <option value="">Optional</option>
+              {endOpts.map(o => <option key={o.val} value={o.val} style={{ background: "#1a1208" }}>{o.label}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style={LS}>Description (optional)</label>
+          <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} placeholder="Any details..." style={{ ...FORM_INPUT_STYLE, height: "auto", padding: "8px 10px", resize: "vertical", lineHeight: 1.5, fontSize: "13px" }} onFocus={e => e.target.style.borderColor="#FFC850"} onBlur={e => e.target.style.borderColor="rgba(255,200,80,0.22)"} />
+        </div>
+
+        <button onClick={handlePost} style={{ background: "linear-gradient(135deg,#FFC850,#FF6B35)", border: "none", borderRadius: "2px", color: "#1a0e00", fontFamily: "'Courier Prime',monospace", fontWeight: "700", letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "12px", padding: "12px", cursor: "pointer" }}>
+          ⚡ Post Show Now
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function AdminPanel({ gigs, onApprove, onReject, onDelete, onMerge, onBatchApprove, onAdminPost }) {
   const pending = gigs.filter(g => g.status === "pending");
   const flagged = pending.filter(g => g.duplicateFlag);
   const clean = pending.filter(g => !g.duplicateFlag);
@@ -774,6 +899,7 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onMerge, onBatchAppro
 
   return (
     <div>
+      <AdminPostForm onPost={onAdminPost} />
       <Section title="⚠ Possible Duplicates" count={flagged.length} color="#FF6B35">
         {flagged.length === 0
           ? <div style={{ fontFamily: "'Lora',serif", color: "#444", fontSize: "13px" }}>None flagged.</div>
@@ -1189,6 +1315,11 @@ export default function App() {
     setGigs(prev => prev.filter(g => g.id !== id));
   };
 
+  const handleAdminPost = async (show) => {
+    const { data, error } = await supabase.from("shows").insert([show]).select();
+    if (!error && data) setGigs(prev => [...prev, ...data.map(mapGig)]);
+  };
+
   const VIEW_TABS = [["today", "Today"], ["weekend", "Next 3 Days"], ["list", "All Shows"], ["calendar", "Calendar"]];
 
   return (
@@ -1318,7 +1449,7 @@ export default function App() {
                   <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", color: "#FFF8EE" }}>Admin Panel</div>
                   <button onClick={() => { setAdminUnlocked(false); setAdminPass(""); }} style={{ background: "transparent", border: "1px solid #222", borderRadius: "2px", color: "#555", fontFamily: "'Courier Prime',monospace", fontSize: "10px", padding: "6px 12px", cursor: "pointer" }}>Lock</button>
                 </div>
-                <AdminPanel gigs={gigs} onApprove={handleApprove} onReject={handleReject} onDelete={handleDelete} onMerge={handleMerge} onBatchApprove={handleBatchApprove} />
+                <AdminPanel gigs={gigs} onApprove={handleApprove} onReject={handleReject} onDelete={handleDelete} onMerge={handleMerge} onBatchApprove={handleBatchApprove} onAdminPost={handleAdminPost} />
               </div>
             )}
           </div>
