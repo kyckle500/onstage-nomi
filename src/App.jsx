@@ -980,7 +980,7 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, on
             <div style={{ display: "flex", gap: "6px" }}>
               {g.status === "approved" && <button onClick={() => onCancel(g.id)} style={{ background: "transparent", border: "1px solid rgba(255,107,53,0.3)", borderRadius: "2px", color: "#FF6B35", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "3px 8px", textTransform: "uppercase" }}>cancel</button>}
               {g.status === "cancelled" && <button onClick={() => onApprove(g.id)} style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "3px 8px", textTransform: "uppercase" }}>restore</button>}
-              <button onClick={() => onDelete(g.id)} style={{ background: "transparent", border: "none", color: "#333", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "4px 8px" }}>remove</button>
+              <button onClick={() => onDelete(g.id)} style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "3px 8px", textTransform: "uppercase" }}>remove</button>
             </div>
           </div>
         ))}
