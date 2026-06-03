@@ -943,7 +943,7 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onMerge, onBatchAppro
                     {batchGigs.length} {batchGigs.length === 1 ? "show" : "shows"} submitted
                   </div>
                 </div>
-                <Btn label={`✓ Approve All ${batchGigs.length > 1 ? `(${batchGigs.length})` : ""}`} onClick={() => onBatchApprove(batchGigs.map(g => g.id))} accent />
+                <Btn label="✓ Approve" onClick={() => onBatchApprove(batchGigs.map(g => g.id))} accent />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 {batchGigs.map(g => (
