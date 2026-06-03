@@ -99,6 +99,11 @@ function GigCard({ gig, compact = false }) {
           </div>
         </div>
       </div>
+      {gig.status === "cancelled" && (
+        <div style={{ background: "rgba(255,107,53,0.15)", border: "1px solid rgba(255,107,53,0.4)", borderRadius: "2px", padding: "5px 10px", marginTop: "4px" }}>
+          <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FF6B35", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: "700" }}>⚠ Cancelled</span>
+        </div>
+      )}
       {gig.description && !compact && <div style={{ fontFamily: "'Lora',serif", fontSize: "13px", color: "#bbb", lineHeight: 1.6 }}>{gig.description}</div>}
       <div style={{ marginTop: "2px" }}>
         <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>
@@ -748,9 +753,9 @@ function SubmitForm({ onSubmit }) {
       <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#444", textAlign: "center" }}>Reviewed before going live · Email never shown publicly</div>
 
       <div style={{ marginTop: "8px", padding: "14px 18px", background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,200,80,0.12)", borderRadius: "3px", textAlign: "center" }}>
-        <span style={{ fontFamily: "'Lora',serif", fontSize: "13px", color: "#555", fontStyle: "italic" }}>Too lazy to fill this out? </span>
-        <a href="mailto:onstagenomi@gmail.com?subject=Post my show for me&body=Artist:%0D%0AVenue:%0D%0ACity:%0D%0ADate:%0D%0AStart Time:%0D%0AEnd Time:%0D%0AAbout the show:" style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FFC850", letterSpacing: "0.06em", textDecoration: "underline", textUnderlineOffset: "3px" }}>
-          Send me the details and I'll post it for you →
+        <span style={{ fontFamily: "'Lora',serif", fontSize: "13px", color: "#555", fontStyle: "italic" }}>Too lazy to fill this out, or need to cancel a show? </span>
+        <a href="mailto:onstagenomi@gmail.com?subject=Post or cancel my show&body=Request (post or cancel):%0D%0AArtist:%0D%0AVenue:%0D%0ACity:%0D%0ADate:%0D%0AStart Time:%0D%0AEnd Time:%0D%0AAbout the show:" style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FFC850", letterSpacing: "0.06em", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+          Email onstagenomi@gmail.com →
         </a>
       </div>
     </div>
@@ -883,12 +888,12 @@ function AdminPostForm({ onPost }) {
   );
 }
 
-function AdminPanel({ gigs, onApprove, onReject, onDelete, onMerge, onBatchApprove, onAdminPost }) {
+function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, onBatchApprove, onAdminPost }) {
   const pending = gigs.filter(g => g.status === "pending");
   const flagged = pending.filter(g => g.duplicateFlag);
   const clean = pending.filter(g => !g.duplicateFlag);
   const today = new Date().toISOString().split("T")[0];
-  const approved = gigs.filter(g => g.status === "approved" && g.date >= today);
+  const approved = gigs.filter(g => (g.status === "approved" || g.status === "cancelled") && g.date >= today);
 
   // Group clean pending by batchId
   const batches = clean.reduce((acc, g) => { const k = g.batchId || g.id; if (!acc[k]) acc[k] = []; acc[k].push(g); return acc; }, {});
@@ -964,14 +969,19 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onMerge, onBatchAppro
         }
       </Section>
 
-      <Section title="Live on the Board" count={approved.length} color="#444">
-        {approved.sort((a,b) => a.date.localeCompare(b.date)).map(g => (
-          <div key={g.id} style={{ ...cardStyle, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Section title="Live on the Board" count={gigs.filter(g => g.status === "approved" || g.status === "cancelled").length} color="#444">
+        {gigs.filter(g => g.status === "approved" || g.status === "cancelled").sort((a,b) => (a.date||"").localeCompare(b.date||"")).map(g => (
+          <div key={g.id} style={{ ...cardStyle, display: "flex", justifyContent: "space-between", alignItems: "center", opacity: g.status === "cancelled" ? 0.6 : 1 }}>
             <div>
               <span style={{ fontFamily: "'Playfair Display',serif", fontSize: "14px", color: "#FFF8EE" }}>{g.artist}</span>
               <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555", marginLeft: "8px" }}>{g.venue} · {formatDate(g.date)}</span>
+              {g.status === "cancelled" && <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#FF6B35", marginLeft: "8px", textTransform: "uppercase" }}>● Cancelled</span>}
             </div>
-            <button onClick={() => onDelete(g.id)} style={{ background: "transparent", border: "none", color: "#333", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "4px 8px" }}>remove</button>
+            <div style={{ display: "flex", gap: "6px" }}>
+              {g.status === "approved" && <button onClick={() => onCancel(g.id)} style={{ background: "transparent", border: "1px solid rgba(255,107,53,0.3)", borderRadius: "2px", color: "#FF6B35", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "3px 8px", textTransform: "uppercase" }}>cancel</button>}
+              {g.status === "cancelled" && <button onClick={() => onApprove(g.id)} style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "3px 8px", textTransform: "uppercase" }}>restore</button>}
+              <button onClick={() => onDelete(g.id)} style={{ background: "transparent", border: "none", color: "#333", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "4px 8px" }}>remove</button>
+            </div>
           </div>
         ))}
       </Section>
@@ -1267,7 +1277,7 @@ export default function App() {
   };
 
   const today = new Date().toISOString().split("T")[0];
-  const approved = gigs.filter(g => g.status === "approved" && g.date >= today);
+  const approved = gigs.filter(g => (g.status === "approved" || g.status === "cancelled") && g.date >= today);
   const pendingCount = gigs.filter(g => g.status === "pending").length;
   const flaggedCount = gigs.filter(g => g.status === "pending" && g.duplicateFlag).length;
 
@@ -1309,6 +1319,11 @@ export default function App() {
   const handleDelete = async (id) => {
     await supabase.from("shows").delete().eq("id", id);
     setGigs(prev => prev.filter(g => g.id !== id));
+  };
+
+  const handleCancel = async (id) => {
+    await supabase.from("shows").update({ status: "cancelled" }).eq("id", id);
+    setGigs(prev => prev.map(g => g.id === id ? { ...g, status: "cancelled" } : g));
   };
   const handleMerge = async (id) => {
     await supabase.from("shows").delete().eq("id", id);
@@ -1449,7 +1464,7 @@ export default function App() {
                   <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", color: "#FFF8EE" }}>Admin Panel</div>
                   <button onClick={() => { setAdminUnlocked(false); setAdminPass(""); }} style={{ background: "transparent", border: "1px solid #222", borderRadius: "2px", color: "#555", fontFamily: "'Courier Prime',monospace", fontSize: "10px", padding: "6px 12px", cursor: "pointer" }}>Lock</button>
                 </div>
-                <AdminPanel gigs={gigs} onApprove={handleApprove} onReject={handleReject} onDelete={handleDelete} onMerge={handleMerge} onBatchApprove={handleBatchApprove} onAdminPost={handleAdminPost} />
+                <AdminPanel gigs={gigs} onApprove={handleApprove} onReject={handleReject} onDelete={handleDelete} onCancel={handleCancel} onMerge={handleMerge} onBatchApprove={handleBatchApprove} onAdminPost={handleAdminPost} />
               </div>
             )}
           </div>
