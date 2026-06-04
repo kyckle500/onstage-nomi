@@ -637,7 +637,7 @@ function ArtistField({ value, onChange, approvedGigs, label }) {
   );
 }
 
-function VenueField({ value, onChange, approvedGigs, posterType, posterName }) {
+function VenueField({ value, onChange, approvedGigs, posterType, posterName, label }) {
   const [query, setQuery] = useState(value || "");
   const [open, setOpen] = useState(false);
 
@@ -664,7 +664,7 @@ function VenueField({ value, onChange, approvedGigs, posterType, posterName }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
-      <label style={FORM_LABEL_STYLE}>Venue</label>
+      <label style={FORM_LABEL_STYLE}>{label || "Venue"}</label>
       <input
         type="text"
         value={query}
@@ -850,7 +850,10 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
       <div style={{ height: "1px", background: "rgba(255,200,80,0.08)" }} />
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-        <FormField label={pl.contact} value={posterName} onChange={handlePosterNameChange} />
+        {posterType === "Venue"
+          ? <VenueField value={posterName} onChange={handlePosterNameChange} approvedGigs={approvedGigs} posterType={posterType} posterName={posterName} label={pl.contact} />
+          : <FormField label={pl.contact} value={posterName} onChange={handlePosterNameChange} />
+        }
         <FormField label={pl.email} value={posterEmail} onChange={setPosterEmail} type="email" />
       </div>
       <ArtistField value={artist} onChange={setArtist} approvedGigs={approvedGigs} label={pl.name} />
