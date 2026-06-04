@@ -570,7 +570,129 @@ function FormField({ label, value, onChange, type = "text", opts = null }) {
   );
 }
 
-function SubmitForm({ onSubmit }) {
+
+function ArtistField({ value, onChange, approvedGigs }) {
+  const [query, setQuery] = useState(value || "");
+  const [open, setOpen] = useState(false);
+
+  // Count artist appearances and only suggest after 2+
+  const artistCounts = approvedGigs.reduce((acc, g) => {
+    if (g.artist) acc[g.artist] = (acc[g.artist] || 0) + 1;
+    return acc;
+  }, {});
+
+  const suggestions = query.length === 0 ? [] :
+    Object.keys(artistCounts)
+      .filter(a => artistCounts[a] >= 2 && a.toLowerCase().includes(query.toLowerCase()) && a !== query)
+      .sort((a, b) => artistCounts[b] - artistCounts[a])
+      .slice(0, 6);
+
+  const select = (artist) => { onChange(artist); setQuery(artist); setOpen(false); };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
+      <label style={FORM_LABEL_STYLE}>Artist / Band Name</label>
+      <input
+        type="text"
+        value={query}
+        placeholder="Artist or band name..."
+        onChange={e => { setQuery(e.target.value); onChange(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 200)}
+        style={{ ...FORM_INPUT_STYLE, borderColor: open && suggestions.length > 0 ? "#FFC850" : "rgba(255,200,80,0.22)" }}
+      />
+      {open && suggestions.length > 0 && (
+        <div style={{
+          position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100,
+          background: "#1a1208", border: "1px solid rgba(255,200,80,0.35)",
+          borderTop: "none", borderRadius: "0 0 3px 3px", overflow: "hidden",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+        }}>
+          {suggestions.map(artist => (
+            <div key={artist} onMouseDown={() => select(artist)} style={{
+              fontFamily: "'Lora',serif", fontSize: "14px", color: "#FFF8EE",
+              padding: "10px 13px", cursor: "pointer", transition: "background 0.1s",
+              borderBottom: "1px solid rgba(255,200,80,0.06)",
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,200,80,0.1)"}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+            >
+              <span>{artist}</span>
+              <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>{artistCounts[artist]} shows</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function VenueField({ value, onChange, approvedGigs, posterType, posterName }) {
+  const [query, setQuery] = useState(value || "");
+  const [open, setOpen] = useState(false);
+
+  // Count venue appearances and only suggest after 2+
+  const venueCounts = approvedGigs.reduce((acc, g) => {
+    if (g.venue) acc[g.venue] = (acc[g.venue] || 0) + 1;
+    return acc;
+  }, {});
+
+  const suggestions = query.length === 0 ? [] :
+    Object.keys(venueCounts)
+      .filter(v => venueCounts[v] >= 2 && v.toLowerCase().includes(query.toLowerCase()) && v !== query)
+      .sort((a, b) => venueCounts[b] - venueCounts[a])
+      .slice(0, 6);
+
+  const select = (venue) => { onChange(venue); setQuery(venue); setOpen(false); };
+
+  // Auto-fill from posterName if Venue type
+  useEffect(() => {
+    if (posterType === "Venue" && posterName && query !== posterName) {
+      setQuery(posterName);
+    }
+  }, [posterName, posterType]);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
+      <label style={FORM_LABEL_STYLE}>Venue</label>
+      <input
+        type="text"
+        value={query}
+        placeholder="Venue name..."
+        onChange={e => { setQuery(e.target.value); onChange(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 200)}
+        style={{ ...FORM_INPUT_STYLE, borderColor: open && suggestions.length > 0 ? "#FFC850" : "rgba(255,200,80,0.22)" }}
+      />
+      {open && suggestions.length > 0 && (
+        <div style={{
+          position: "absolute", top: "100%", left: 0, right: 0, zIndex: 100,
+          background: "#1a1208", border: "1px solid rgba(255,200,80,0.35)",
+          borderTop: "none", borderRadius: "0 0 3px 3px", overflow: "hidden",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+        }}>
+          {suggestions.map(venue => (
+            <div key={venue} onMouseDown={() => select(venue)} style={{
+              fontFamily: "'Lora',serif", fontSize: "14px", color: "#FFF8EE",
+              padding: "10px 13px", cursor: "pointer", transition: "background 0.1s",
+              borderBottom: "1px solid rgba(255,200,80,0.06)",
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,200,80,0.1)"}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+            >
+              <span>{venue}</span>
+              <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>{venueCounts[venue]} shows</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SubmitForm({ onSubmit, approvedGigs = [] }) {
   const [posterType, setPosterType] = useState("Musician / Band");
   const [posterName, setPosterName] = useState("");
   const [posterEmail, setPosterEmail] = useState("");
@@ -696,7 +818,10 @@ function SubmitForm({ onSubmit }) {
         <FormField label={pl.contact} value={posterName} onChange={handlePosterNameChange} />
         <FormField label={pl.email} value={posterEmail} onChange={setPosterEmail} type="email" />
       </div>
-      <FormField label={pl.name} value={artist} onChange={setArtist} />
+      {posterType === "Musician / Band" || posterType === "Booking Agent" || posterType === "Groupie"
+        ? <ArtistField value={artist} onChange={setArtist} approvedGigs={approvedGigs} />
+        : <FormField label={pl.name} value={artist} onChange={setArtist} />
+      }
 
       <div style={{ height: "1px", background: "rgba(255,200,80,0.08)" }} />
 
@@ -721,7 +846,7 @@ function SubmitForm({ onSubmit }) {
                 <FormField label="Start Time" value={show.time} onChange={v => updateShow(show.id, "time", v)} type="time" />
                 <EndTimeField value={show.endTime || ""} onChange={v => updateShow(show.id, "endTime", v)} startTime={show.time} />
               </div>
-              <FormField label="Venue" value={show.venue} onChange={v => updateShow(show.id, "venue", v)} />
+              <VenueField value={show.venue} onChange={v => updateShow(show.id, "venue", v)} approvedGigs={approvedGigs} posterType={posterType} posterName={posterName} />
               <CityField value={show.city} onChange={v => updateShow(show.id, "city", v)} />
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <label style={labelStyle}>About this show (optional)</label>
@@ -1439,7 +1564,7 @@ export default function App() {
               <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", color: "#FFF8EE", marginBottom: "6px" }}>Post Your Shows</div>
               <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#666", lineHeight: 1.6 }}>Add one show or your whole summer. Use "+ Copy Event" to duplicate a show and just change the date.</div>
             </div>
-            <SubmitForm onSubmit={handleSubmit} />
+            <SubmitForm onSubmit={handleSubmit} approvedGigs={approved} />
           </div>
         )}
 
