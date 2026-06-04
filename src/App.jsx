@@ -751,6 +751,7 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
     for (const s of valid) {
       await onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), duplicateFlag: false, batchId });
     }
+    alert("About to show success screen. trusted=" + trusted + " wasTrusted will be set to: " + trusted);
     setWasTrusted(trusted);
     setSubmitted(true);
   };
