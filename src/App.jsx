@@ -745,7 +745,6 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
     const emailClean = (posterEmail || "").trim().toLowerCase();
     const { data: tData, error: tError } = await supabase.from("trusted_posters").select("email").ilike("email", emailClean).limit(1);
     const trusted = tData && tData.length > 0;
-    alert("Email: " + emailClean + " | Trusted data: " + JSON.stringify(tData) + " | Error: " + JSON.stringify(tError) + " | Result: " + trusted);
 
     const batchId = `batch-${Date.now()}`;
     try {
@@ -755,17 +754,23 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
     } catch(e) {
       alert("Submit loop error: " + e.message);
     }
-    alert("About to show success. trusted=" + trusted);
     setWasTrusted(trusted);
     setSubmitted(true);
   };
 
   if (submitted) return (
     <div style={{ textAlign: "center", padding: "60px 20px" }}>
-      <div style={{ fontSize: "48px", marginBottom: "16px" }}>🎸</div>
-      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "26px", color: "#FFC850", marginBottom: "12px" }}>You're on the list!</div>
-      <div style={{ fontFamily: "'Lora',serif", color: "#aaa", fontSize: "15px", lineHeight: 1.7 }}>Your {shows.length > 1 ? `${shows.filter(s=>s.venue&&s.date&&s.time).length} shows have` : "show has"} been submitted for review.</div>
-      <button onClick={() => { setSubmitted(false); setShows([{ id: 1, venue: "", city: "Traverse City", date: "", time: "", description: "" }]); setArtist(""); setPosterName(""); setPosterEmail(""); }} style={{ marginTop: "28px", background: "transparent", border: "1px solid #FFC850", color: "#FFC850", fontFamily: "'Courier Prime',monospace", letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "12px", padding: "10px 24px", cursor: "pointer", borderRadius: "2px" }}>Submit Another</button>
+      <div style={{ fontSize: "48px", marginBottom: "16px" }}>{wasTrusted ? "⭐" : "🎸"}</div>
+      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "26px", color: "#FFC850", marginBottom: "12px" }}>
+        {wasTrusted ? "You're live!" : "You're on the list!"}
+      </div>
+      <div style={{ fontFamily: "'Lora',serif", color: "#aaa", fontSize: "15px", lineHeight: 1.7 }}>
+        {wasTrusted
+          ? "You're a trusted poster on On Stage NoMi — your show is live on the board right now. No review needed. Go check it out! 🎸"
+          : `Your ${shows.filter(s=>s.venue&&s.date&&s.time).length > 1 ? shows.filter(s=>s.venue&&s.date&&s.time).length + " shows have" : "show has"} been submitted for review. We'll get it posted shortly.`
+        }
+      </div>
+      <button onClick={() => { setSubmitted(false); setWasTrusted(false); setShows([{ id: 1, venue: "", city: "", date: "", time: "", endTime: "", description: "" }]); setArtist(""); setPosterName(""); setPosterEmail(""); }} style={{ marginTop: "28px", background: "transparent", border: "1px solid #FFC850", color: "#FFC850", fontFamily: "'Courier Prime',monospace", letterSpacing: "0.1em", textTransform: "uppercase", fontSize: "12px", padding: "10px 24px", cursor: "pointer", borderRadius: "2px" }}>Submit Another</button>
     </div>
   );
 
