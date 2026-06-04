@@ -741,10 +741,10 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
     if (errs.length > 0) { setErrors(errs); return; }
     setErrors([]);
     const batchId = `batch-${Date.now()}`;
-    valid.forEach(s => {
-      onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), status: "pending", duplicateFlag: false, batchId });
-    });
-    setWasTrusted(isTrusted);
+    const submissions = valid.map(s => onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), duplicateFlag: false, batchId }));
+    const results = await Promise.all(submissions);
+    const trusted = results.some(r => r === true);
+    setWasTrusted(trusted);
     setSubmitted(true);
   };
 
