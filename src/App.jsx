@@ -729,12 +729,19 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
     }
   };
 
-  // When poster type switches to Venue and name already entered, sync venue
+  // When poster type switches to Venue, sync existing name to all show venues
   useEffect(() => {
     if (posterType === "Venue" && posterName) {
       setShows(prev => prev.map(s => ({ ...s, venue: posterName })));
     }
   }, [posterType]);
+
+  // Also sync whenever posterName changes and type is Venue
+  useEffect(() => {
+    if (posterType === "Venue" && posterName) {
+      setShows(prev => prev.map(s => ({ ...s, venue: posterName })));
+    }
+  }, [posterName]);
 
   const [errors, setErrors] = useState([]);
 
