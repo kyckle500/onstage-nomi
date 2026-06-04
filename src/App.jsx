@@ -547,14 +547,23 @@ function getEndOptions(startVal) {
   return opts;
 }
 
-function FormField({ label, value, onChange, type = "text", opts = null }) {
+function FormField({ label, value, onChange, type = "text", opts = null, selectedDate = "" }) {
   if (type === "time") {
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+    const isToday = selectedDate === todayStr;
+    const minMins = isToday ? (now.getHours() * 60 + now.getMinutes() + 30) : 0;
+    const filteredStart = START_OPTIONS.filter(o => {
+      if (!isToday) return true;
+      const [h, m] = o.val.split(":").map(Number);
+      return (h * 60 + m) >= minMins;
+    });
     return (
       <div style={{ display: "flex", flexDirection: "column" }}>
         <label style={FORM_LABEL_STYLE}>{label}</label>
         <select value={value} onChange={e => onChange(e.target.value)} style={{ ...FORM_INPUT_STYLE, cursor: "pointer" }}>
           <option value="" style={{ background: "#1a1208" }}>Select time...</option>
-          {START_OPTIONS.map(o => <option key={o.val} value={o.val} style={{ background: "#1a1208" }}>{o.label}</option>)}
+          {filteredStart.map(o => <option key={o.val} value={o.val} style={{ background: "#1a1208" }}>{o.label}</option>)}
         </select>
       </div>
     );
@@ -571,7 +580,7 @@ function FormField({ label, value, onChange, type = "text", opts = null }) {
 }
 
 
-function ArtistField({ value, onChange, approvedGigs }) {
+function ArtistField({ value, onChange, approvedGigs, label }) {
   const [query, setQuery] = useState(value || "");
   const [open, setOpen] = useState(false);
 
@@ -591,7 +600,7 @@ function ArtistField({ value, onChange, approvedGigs }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
-      <label style={FORM_LABEL_STYLE}>Artist / Band Name</label>
+      <label style={FORM_LABEL_STYLE}>{label || "Artist / Band Name"}</label>
       <input
         type="text"
         value={query}
@@ -699,6 +708,7 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
   const [artist, setArtist] = useState("");
   const [shows, setShows] = useState([{ id: 1, venue: "", city: "", date: "", time: "", endTime: "", description: "" }]);
   const [submitted, setSubmitted] = useState(false);
+  const [wasTrusted, setWasTrusted] = useState(false);
 
   const addShow = (copyFrom = null) => {
     const source = copyFrom ? shows.find(s => s.id === copyFrom) : null;
@@ -721,7 +731,7 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
 
   const [errors, setErrors] = useState([]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const errs = [];
     if (!posterName) errs.push("Your name is required");
     if (!posterEmail) errs.push("Your email is required");
@@ -734,6 +744,7 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
     valid.forEach(s => {
       onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), status: "pending", duplicateFlag: false, batchId });
     });
+    setWasTrusted(isTrusted);
     setSubmitted(true);
   };
 
@@ -818,10 +829,7 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
         <FormField label={pl.contact} value={posterName} onChange={handlePosterNameChange} />
         <FormField label={pl.email} value={posterEmail} onChange={setPosterEmail} type="email" />
       </div>
-      {posterType === "Musician / Band" || posterType === "Booking Agent" || posterType === "Groupie"
-        ? <ArtistField value={artist} onChange={setArtist} approvedGigs={approvedGigs} />
-        : <FormField label={pl.name} value={artist} onChange={setArtist} />
-      }
+      <ArtistField value={artist} onChange={setArtist} approvedGigs={approvedGigs} label={pl.name} />
 
       <div style={{ height: "1px", background: "rgba(255,200,80,0.08)" }} />
 
@@ -843,7 +851,7 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <DateField value={show.date} onChange={v => updateShow(show.id, "date", v)} inputStyle={FORM_INPUT_STYLE} labelStyle={FORM_LABEL_STYLE} />
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                <FormField label="Start Time" value={show.time} onChange={v => updateShow(show.id, "time", v)} type="time" />
+                <FormField label="Start Time" value={show.time} onChange={v => updateShow(show.id, "time", v)} type="time" selectedDate={show.date} />
                 <EndTimeField value={show.endTime || ""} onChange={v => updateShow(show.id, "endTime", v)} startTime={show.time} />
               </div>
               <VenueField value={show.venue} onChange={v => updateShow(show.id, "venue", v)} approvedGigs={approvedGigs} posterType={posterType} posterName={posterName} />
@@ -1193,10 +1201,11 @@ function SaleSubmitForm({ onSubmit }) {
   const [highlights, setHighlights] = useState([]);
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [wasTrusted, setWasTrusted] = useState(false);
 
   const toggleHighlight = (h) => setHighlights(prev => prev.includes(h) ? prev.filter(x => x !== h) : [...prev, h]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name || !address || !city || !date.month || !date.day || !startTime) return;
     const dateStr = `${date.year}-${date.month}-${date.day}`;
     onSubmit({ id: Date.now(), name, address, city, date: dateStr, startTime, endTime, description, highlights, email, status: "pending" });
@@ -1505,7 +1514,12 @@ export default function App() {
 
   const handleAdminPost = async (show) => {
     const { data, error } = await supabase.from("shows").insert([show]).select();
-    if (!error && data) setGigs(prev => [...prev, ...data.map(mapGig)]);
+    if (!error && data) {
+      const newGigs = data.map(mapGig);
+      setGigs(prev => [...prev, ...newGigs]);
+      return isTrusted;
+    }
+    return false;
   };
 
   const VIEW_TABS = [["today", "Today"], ["weekend", "Next 3 Days"], ["list", "All Shows"], ["calendar", "Calendar"]];
