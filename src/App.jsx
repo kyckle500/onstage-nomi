@@ -106,11 +106,9 @@ function GigCard({ gig, compact = false }) {
       )}
       {gig.description && !compact && <div style={{ fontFamily: "'Lora',serif", fontSize: "13px", color: "#bbb", lineHeight: 1.6 }}>{gig.description}</div>}
       <div style={{ marginTop: "2px" }}>
-        {(gig.posterType) && (
-          <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>
-            Booked by: <span style={{ color: "#888" }}>{POSTER_ICONS[gig.posterType] || "🎵"} {gig.posterType}</span>
-          </span>
-        )}
+        <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>
+          Booked by: <span style={{ color: "#888" }}>{POSTER_ICONS[gig.posterType] || "🎵"} {gig.posterType || "Musician / Band"}</span>
+        </span>
       </div>
     </div>
   );
@@ -657,9 +655,9 @@ function VenueField({ value, onChange, approvedGigs, posterType, posterName }) {
 
   const select = (venue) => { onChange(venue); setQuery(venue); setOpen(false); };
 
-  // Auto-fill from posterName if Venue type
+  // Auto-fill from posterName if Venue type and query is empty
   useEffect(() => {
-    if (posterType === "Venue" && posterName && query !== posterName) {
+    if (posterType === "Venue" && posterName && !query) {
       setQuery(posterName);
     }
   }, [posterName, posterType]);
