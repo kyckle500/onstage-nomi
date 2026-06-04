@@ -641,6 +641,11 @@ function VenueField({ value, onChange, approvedGigs, posterType, posterName, lab
   const [query, setQuery] = useState(value || "");
   const [open, setOpen] = useState(false);
 
+  // Sync internal query when external value changes
+  useEffect(() => {
+    if (value && value !== query) setQuery(value);
+  }, [value]);
+
   // Count venue appearances and only suggest after 2+
   const venueCounts = approvedGigs.reduce((acc, g) => {
     if (g.venue) acc[g.venue] = (acc[g.venue] || 0) + 1;
@@ -654,13 +659,6 @@ function VenueField({ value, onChange, approvedGigs, posterType, posterName, lab
       .slice(0, 6);
 
   const select = (venue) => { onChange(venue); setQuery(venue); setOpen(false); };
-
-  // Auto-fill from posterName if Venue type and query is empty
-  useEffect(() => {
-    if (posterType === "Venue" && posterName && !query) {
-      setQuery(posterName);
-    }
-  }, [posterName, posterType]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
