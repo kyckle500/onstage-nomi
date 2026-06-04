@@ -1103,10 +1103,12 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, on
       <Section title="Trusted Posters" count={trustedEmails.length} color="#FFC850">
         {trustedEmails.length === 0
           ? <div style={{ fontFamily: "'Lora',serif", color: "#444", fontSize: "13px" }}>No trusted posters yet. Approve a submission and click ★ Trust to add them.</div>
-          : trustedEmails.map(email => (
-            <div key={email} style={{ ...cardStyle, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850" }}>★ {email}</div>
-              <button onClick={() => onUntrust(email)} style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.2)", borderRadius: "2px", color: "#666", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "3px 8px", textTransform: "uppercase" }}>remove</button>
+          : trustedEmails.map((email, idx) => (
+            <div key={idx} style={{ ...cardStyle, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850" }}>★ {typeof email === "object" ? email.email : email}</div>
+              </div>
+              <button onClick={() => onUntrust(typeof email === "object" ? email.email : email)} style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.2)", borderRadius: "2px", color: "#666", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "3px 8px", textTransform: "uppercase" }}>remove</button>
             </div>
           ))
         }
@@ -1429,8 +1431,10 @@ export default function App() {
     const dupeOf = isDupe ? gigs.find(g => g.status === "approved" && g.artist.toLowerCase() === gig.artist.toLowerCase() && g.venue.toLowerCase() === gig.venue.toLowerCase() && g.date === gig.date)?.id : null;
 
     // Check if poster is trusted
-    const { data: trustedData } = await supabase.from("trusted_posters").select("email").eq("email", gig.posterEmail).limit(1);
+    const posterEmailClean = (gig.posterEmail || "").trim().toLowerCase();
+    const { data: trustedData } = await supabase.from("trusted_posters").select("email").ilike("email", posterEmailClean).limit(1);
     const isTrusted = trustedData && trustedData.length > 0;
+    console.log("Trusted check for:", posterEmailClean, "result:", isTrusted);
 
     const newGig = {
       artist: gig.artist,
@@ -1478,7 +1482,7 @@ export default function App() {
 
   useEffect(() => {
     const loadTrusted = async () => {
-      const { data } = await supabase.from("trusted_posters").select("email");
+      const { data } = await supabase.from("trusted_posters").select("email, name");
       if (data) setTrustedEmails(data.map(t => t.email));
     };
     loadTrusted();
