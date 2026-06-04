@@ -748,10 +748,14 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
     alert("Email: " + emailClean + " | Trusted data: " + JSON.stringify(tData) + " | Error: " + JSON.stringify(tError) + " | Result: " + trusted);
 
     const batchId = `batch-${Date.now()}`;
-    for (const s of valid) {
-      await onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), duplicateFlag: false, batchId });
+    try {
+      for (const s of valid) {
+        await onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), duplicateFlag: false, batchId });
+      }
+    } catch(e) {
+      alert("Submit loop error: " + e.message);
     }
-    alert("About to show success screen. trusted=" + trusted + " wasTrusted will be set to: " + trusted);
+    alert("About to show success. trusted=" + trusted);
     setWasTrusted(trusted);
     setSubmitted(true);
   };
