@@ -1013,7 +1013,7 @@ function AdminPostForm({ onPost }) {
   );
 }
 
-function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, onBatchApprove, onAdminPost }) {
+function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, onBatchApprove, onAdminPost, onTrust, onUntrust, trustedEmails = [] }) {
   const pending = gigs.filter(g => g.status === "pending");
   const flagged = pending.filter(g => g.duplicateFlag);
   const clean = pending.filter(g => !g.duplicateFlag);
@@ -1073,7 +1073,13 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, on
                     {batchGigs.length} {batchGigs.length === 1 ? "show" : "shows"} submitted
                   </div>
                 </div>
+                <div style={{ display: "flex", gap: "7px", alignItems: "center" }}>
                 <Btn label="✓ Approve" onClick={() => onBatchApprove(batchGigs.map(g => g.id))} accent />
+                {!trustedEmails.includes(batchGigs[0].posterEmail) 
+                  ? <Btn label="★ Trust" onClick={() => { onBatchApprove(batchGigs.map(g => g.id)); onTrust(batchGigs[0].posterEmail, batchGigs[0].posterName); }} />
+                  : <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#FFC850", letterSpacing: "0.06em" }}>★ Trusted</span>
+                }
+              </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 {batchGigs.map(g => (
@@ -1089,6 +1095,18 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, on
                   </div>
                 ))}
               </div>
+            </div>
+          ))
+        }
+      </Section>
+
+      <Section title="Trusted Posters" count={trustedEmails.length} color="#FFC850">
+        {trustedEmails.length === 0
+          ? <div style={{ fontFamily: "'Lora',serif", color: "#444", fontSize: "13px" }}>No trusted posters yet. Approve a submission and click ★ Trust to add them.</div>
+          : trustedEmails.map(email => (
+            <div key={email} style={{ ...cardStyle, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850" }}>★ {email}</div>
+              <button onClick={() => onUntrust(email)} style={{ background: "transparent", border: "1px solid rgba(255,200,80,0.2)", borderRadius: "2px", color: "#666", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", padding: "3px 8px", textTransform: "uppercase" }}>remove</button>
             </div>
           ))
         }
@@ -1409,6 +1427,11 @@ export default function App() {
   const handleSubmit = async (gig) => {
     const isDupe = gigs.some(g => g.status === "approved" && g.artist.toLowerCase() === gig.artist.toLowerCase() && g.venue.toLowerCase() === gig.venue.toLowerCase() && g.date === gig.date);
     const dupeOf = isDupe ? gigs.find(g => g.status === "approved" && g.artist.toLowerCase() === gig.artist.toLowerCase() && g.venue.toLowerCase() === gig.venue.toLowerCase() && g.date === gig.date)?.id : null;
+
+    // Check if poster is trusted
+    const { data: trustedData } = await supabase.from("trusted_posters").select("email").eq("email", gig.posterEmail).limit(1);
+    const isTrusted = trustedData && trustedData.length > 0;
+
     const newGig = {
       artist: gig.artist,
       venue: gig.venue,
@@ -1420,7 +1443,7 @@ export default function App() {
       posterType: gig.posterType,
       posterName: gig.posterName,
       posterEmail: gig.posterEmail,
-      status: "pending",
+      status: isTrusted ? "approved" : "pending",
       batchId: gig.batchId || "",
       duplicateFlag: isDupe,
       duplicateOf: dupeOf || null,
@@ -1449,6 +1472,27 @@ export default function App() {
   const handleCancel = async (id) => {
     await supabase.from("shows").update({ status: "cancelled" }).eq("id", id);
     setGigs(prev => prev.map(g => g.id === id ? { ...g, status: "cancelled" } : g));
+  };
+
+  const [trustedEmails, setTrustedEmails] = useState([]);
+
+  useEffect(() => {
+    const loadTrusted = async () => {
+      const { data } = await supabase.from("trusted_posters").select("email");
+      if (data) setTrustedEmails(data.map(t => t.email));
+    };
+    loadTrusted();
+  }, []);
+
+  const handleTrust = async (email, name) => {
+    if (trustedEmails.includes(email)) return;
+    await supabase.from("trusted_posters").insert([{ email, name }]);
+    setTrustedEmails(prev => [...prev, email]);
+  };
+
+  const handleUntrust = async (email) => {
+    await supabase.from("trusted_posters").delete().eq("email", email);
+    setTrustedEmails(prev => prev.filter(e => e !== email));
   };
   const handleMerge = async (id) => {
     await supabase.from("shows").delete().eq("id", id);
@@ -1589,7 +1633,7 @@ export default function App() {
                   <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", color: "#FFF8EE" }}>Admin Panel</div>
                   <button onClick={() => { setAdminUnlocked(false); setAdminPass(""); }} style={{ background: "transparent", border: "1px solid #222", borderRadius: "2px", color: "#555", fontFamily: "'Courier Prime',monospace", fontSize: "10px", padding: "6px 12px", cursor: "pointer" }}>Lock</button>
                 </div>
-                <AdminPanel gigs={gigs} onApprove={handleApprove} onReject={handleReject} onDelete={handleDelete} onCancel={handleCancel} onMerge={handleMerge} onBatchApprove={handleBatchApprove} onAdminPost={handleAdminPost} />
+                <AdminPanel gigs={gigs} onApprove={handleApprove} onReject={handleReject} onDelete={handleDelete} onCancel={handleCancel} onMerge={handleMerge} onBatchApprove={handleBatchApprove} onAdminPost={handleAdminPost} onTrust={handleTrust} onUntrust={handleUntrust} trustedEmails={trustedEmails} />
               </div>
             )}
           </div>
