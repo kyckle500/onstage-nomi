@@ -1025,8 +1025,8 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, on
   const pending = gigs.filter(g => g.status === "pending");
   const flagged = pending.filter(g => g.duplicateFlag);
   const clean = pending.filter(g => !g.duplicateFlag);
-  const today = new Date().toISOString().split("T")[0];
-  const approved = gigs.filter(g => (g.status === "approved" || g.status === "cancelled") && g.date >= today);
+  // Admin sees ALL shows regardless of date
+  const approved = gigs.filter(g => g.status === "approved" || g.status === "cancelled");
 
   // Group clean pending by batchId
   const batches = clean.reduce((acc, g) => { const k = g.batchId || g.id; if (!acc[k]) acc[k] = []; acc[k].push(g); return acc; }, {});
