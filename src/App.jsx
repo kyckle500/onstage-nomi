@@ -743,8 +743,9 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
 
     // Check trusted status directly in the form
     const emailClean = (posterEmail || "").trim().toLowerCase();
-    const { data: tData } = await supabase.from("trusted_posters").select("email").ilike("email", emailClean).limit(1);
+    const { data: tData, error: tError } = await supabase.from("trusted_posters").select("email").ilike("email", emailClean).limit(1);
     const trusted = tData && tData.length > 0;
+    alert("Email: " + emailClean + " | Trusted data: " + JSON.stringify(tData) + " | Error: " + JSON.stringify(tError) + " | Result: " + trusted);
 
     const batchId = `batch-${Date.now()}`;
     for (const s of valid) {
