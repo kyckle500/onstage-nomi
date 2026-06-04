@@ -106,9 +106,11 @@ function GigCard({ gig, compact = false }) {
       )}
       {gig.description && !compact && <div style={{ fontFamily: "'Lora',serif", fontSize: "13px", color: "#bbb", lineHeight: 1.6 }}>{gig.description}</div>}
       <div style={{ marginTop: "2px" }}>
-        <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>
-          Booked by: <span style={{ color: "#888" }}>{POSTER_ICONS[gig.posterType]} {gig.posterType}</span>
-        </span>
+        {(gig.posterType) && (
+          <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>
+            Booked by: <span style={{ color: "#888" }}>{POSTER_ICONS[gig.posterType] || "🎵"} {gig.posterType}</span>
+          </span>
+        )}
       </div>
     </div>
   );
@@ -729,6 +731,13 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
     }
   };
 
+  // When poster type switches to Venue and name already entered, sync venue
+  useEffect(() => {
+    if (posterType === "Venue" && posterName) {
+      setShows(prev => prev.map(s => ({ ...s, venue: posterName })));
+    }
+  }, [posterType]);
+
   const [errors, setErrors] = useState([]);
 
   const handleSubmit = async () => {
@@ -766,7 +775,7 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
       </div>
       <div style={{ fontFamily: "'Lora',serif", color: "#aaa", fontSize: "15px", lineHeight: 1.7 }}>
         {wasTrusted
-          ? "You're a trusted poster on On Stage NoMi — your show is live on the board right now. No review needed. Go check it out! 🎸"
+          ? "You're a trusted poster on OnStage NoMi - your show is live on the board right now. No review needed. Go check it out!"
           : `Your ${shows.filter(s=>s.venue&&s.date&&s.time).length > 1 ? shows.filter(s=>s.venue&&s.date&&s.time).length + " shows have" : "show has"} been submitted for review. We'll get it posted shortly.`
         }
       </div>
