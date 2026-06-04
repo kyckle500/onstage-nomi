@@ -740,10 +740,16 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
     if (valid.length === 0) errs.push("At least one show needs a venue, date, and start time");
     if (errs.length > 0) { setErrors(errs); return; }
     setErrors([]);
+
+    // Check trusted status directly in the form
+    const emailClean = (posterEmail || "").trim().toLowerCase();
+    const { data: tData } = await supabase.from("trusted_posters").select("email").ilike("email", emailClean).limit(1);
+    const trusted = tData && tData.length > 0;
+
     const batchId = `batch-${Date.now()}`;
-    const submissions = valid.map(s => onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), duplicateFlag: false, batchId }));
-    const results = await Promise.all(submissions);
-    const trusted = results.some(r => r === true);
+    for (const s of valid) {
+      await onSubmit({ ...s, artist, posterType, posterName, posterEmail, id: Date.now() + Math.random(), duplicateFlag: false, batchId });
+    }
     setWasTrusted(trusted);
     setSubmitted(true);
   };
@@ -1386,7 +1392,7 @@ export default function App() {
   const mapGig = (d) => ({
     ...d,
     endTime: d.endTime || d.endtime || "",
-    posterType: d.posterType || d.postertype || "",
+    posterType: d.posterType || d.postertype || "Musician / Band",
     posterName: d.posterName || d.postername || "",
     posterEmail: d.posterEmail || d.posteremail || "",
     batchId: d.batchId || d.batchid || "",
