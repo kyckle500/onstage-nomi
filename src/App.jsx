@@ -1708,9 +1708,9 @@ export default function App() {
               <button onClick={() => setTab("submit")} style={{ background: "none", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", textDecoration: "underline" }}>Post it here →</button>
             </div>
             <div style={{ marginTop: "20px", textAlign: "center", display: "flex", gap: "16px", justifyContent: "center" }}>
-              <button onClick={() => setLegalPage("terms")} style={{ background: "none", border: "none", color: "#444", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase" }}>Terms of Service</button>
-              <span style={{ color: "#333" }}>·</span>
-              <button onClick={() => setLegalPage("privacy")} style={{ background: "none", border: "none", color: "#444", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase" }}>Privacy Policy</button>
+              <button onClick={() => setLegalPage("terms")} style={{ background: "none", border: "none", color: "#888", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "underline" }}>Terms of Service</button>
+              <span style={{ color: "#666" }}>·</span>
+              <button onClick={() => setLegalPage("privacy")} style={{ background: "none", border: "none", color: "#888", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "underline" }}>Privacy Policy</button>
             </div>
             </>}
           </div>
@@ -1753,10 +1753,9 @@ export default function App() {
             )}
           </div>
         )}
-      </div>
-
       </>
       }
+      </div>
 
       {/* Bottom Nav */}
       <div style={{
