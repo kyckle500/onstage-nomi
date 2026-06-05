@@ -1407,8 +1407,66 @@ function GarageSaleSection() {
   );
 }
 
+
+function TermsPage({ onBack }) {
+  const sections = [
+    ["1. Acceptance of Terms", "By accessing or using On Stage NoMi (onstagenomi.com), you agree to these Terms of Service. If you do not agree, please do not use the site."],
+    ["2. What We Do", "On Stage NoMi is a community platform for discovering and posting live music events in Northern Michigan. All submissions are reviewed before publishing."],
+    ["3. User Submissions", "By submitting a show, you confirm the information is accurate. You grant On Stage NoMi the right to display your submission. We reserve the right to approve, reject, edit, or remove any submission."],
+    ["4. Accuracy", "On Stage NoMi makes no guarantees about accuracy of submitted event info. Always verify details directly with the venue or artist."],
+    ["5. Cancellations", "If a show is cancelled, notify us at onstagenomi@gmail.com. Cancelled shows may be marked rather than removed so fans are aware."],
+    ["6. Prohibited Content", "Do not submit false, misleading, offensive, or spam content. Violations may result in removal and being blocked from future submissions."],
+    ["7. Intellectual Property", "The On Stage NoMi name, logo, and design are our property. Submitted content remains property of the submitter."],
+    ["8. Limitation of Liability", "On Stage NoMi is provided as-is. We are not liable for damages from use of this platform or inaccurate event information."],
+    ["9. Changes", "We may update these terms at any time. Continued use constitutes acceptance."],
+    ["10. Contact", "Questions? Email onstagenomi@gmail.com."],
+  ];
+  return (
+    <div style={{ maxWidth: "740px", margin: "0 auto", padding: "40px 20px 100px" }}>
+      <button onClick={onBack} style={{ background: "transparent", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", marginBottom: "32px", padding: 0 }}>back</button>
+      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "32px", fontWeight: "900", color: "#FFF8EE", marginBottom: "8px" }}>Terms of Service</div>
+      <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#555", marginBottom: "40px" }}>Last updated: June 2026</div>
+      {sections.map(([title, body]) => (
+        <div key={title} style={{ marginBottom: "28px" }}>
+          <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFC850", marginBottom: "8px" }}>{title}</div>
+          <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#bbb", lineHeight: 1.8 }}>{body}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PrivacyPage({ onBack }) {
+  const sections = [
+    ["1. What We Collect", "When you submit a show, we collect your name, email address, and event details. We do not collect payment info, location data, or other personal data."],
+    ["2. How We Use It", "Your name and event details are displayed publicly. Your email is used only to contact you about your submission and is never shown publicly."],
+    ["3. Email", "By submitting, you acknowledge we may contact you about your submission. We do not send marketing emails without consent."],
+    ["4. Data Storage", "Data is stored securely using Supabase. We do not sell or share your personal information with third parties."],
+    ["5. Cookies", "On Stage NoMi does not use tracking cookies or third-party analytics."],
+    ["6. Third Party Services", "We use Supabase, Vercel, and Resend. These services have their own privacy policies."],
+    ["7. Data Retention", "Show data is retained indefinitely. To remove your data, contact onstagenomi@gmail.com."],
+    ["8. Children", "On Stage NoMi is not directed at children under 13. We do not knowingly collect info from children."],
+    ["9. Changes", "We may update this policy at any time. Continued use constitutes acceptance."],
+    ["10. Contact", "Privacy questions? Email onstagenomi@gmail.com."],
+  ];
+  return (
+    <div style={{ maxWidth: "740px", margin: "0 auto", padding: "40px 20px 100px" }}>
+      <button onClick={onBack} style={{ background: "transparent", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", marginBottom: "32px", padding: 0 }}>back</button>
+      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "32px", fontWeight: "900", color: "#FFF8EE", marginBottom: "8px" }}>Privacy Policy</div>
+      <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#555", marginBottom: "40px" }}>Last updated: June 2026</div>
+      {sections.map(([title, body]) => (
+        <div key={title} style={{ marginBottom: "28px" }}>
+          <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFC850", marginBottom: "8px" }}>{title}</div>
+          <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#bbb", lineHeight: 1.8 }}>{body}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function App() {
   const [section, setSection] = useState("music");
+  const [legalPage, setLegalPage] = useState(null);
   const [tab, setTab] = useState("board");
   const [boardView, setBoardView] = useState("today");
   const [gigs, setGigs] = useState([]);
@@ -1593,7 +1651,9 @@ export default function App() {
           <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#777", fontStyle: "italic", marginTop: "8px" }}>Local music. Real venues. Northern Michigan.</div>
         </div>
 
-        {/* Coming soon for all non-music sections */}
+        {legalPage && (legalPage === "terms" ? <TermsPage onBack={() => setLegalPage(null)} /> : <PrivacyPage onBack={() => setLegalPage(null)} />)}
+      {!legalPage && <>
+      {/* Coming soon for all non-music sections */}
         {section !== "music" && (
           <div style={{ textAlign: "center", padding: "60px 20px" }}>
             <div style={{ fontSize: "52px", marginBottom: "20px" }}>
@@ -1647,6 +1707,11 @@ export default function App() {
               Playing a show?{" "}
               <button onClick={() => setTab("submit")} style={{ background: "none", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", textDecoration: "underline" }}>Post it here →</button>
             </div>
+            <div style={{ marginTop: "20px", textAlign: "center", display: "flex", gap: "16px", justifyContent: "center" }}>
+              <button onClick={() => setLegalPage("terms")} style={{ background: "none", border: "none", color: "#444", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase" }}>Terms of Service</button>
+              <span style={{ color: "#333" }}>·</span>
+              <button onClick={() => setLegalPage("privacy")} style={{ background: "none", border: "none", color: "#444", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase" }}>Privacy Policy</button>
+            </div>
             </>}
           </div>
         )}
@@ -1689,6 +1754,9 @@ export default function App() {
           </div>
         )}
       </div>
+
+      </>
+      }
 
       {/* Bottom Nav */}
       <div style={{
