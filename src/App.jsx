@@ -19,7 +19,7 @@ const CITIES = [
   "Thompsonville", "Torch Lake", "Williamsburg",
   "Other"
 ];
-const POSTER_ICONS = { "Musician / Band": "🎸", "Venue": "🏠", "Booking Agent": "📋", "Groupie": "🤘" };
+const POSTER_ICONS = { "Musician / Band": "🎸", "Venue": "🏠", "Booking Agent": "📋", "Groupie": "🤘", "Admin": "⭐" };
 
 const SAMPLE_GIGS = [
   // ── Today 2026-05-21 ──
