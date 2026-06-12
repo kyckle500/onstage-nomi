@@ -1408,6 +1408,141 @@ function GarageSaleSection() {
 }
 
 
+
+function AboutPage({ onBack }) {
+  return (
+    <div style={{ maxWidth: "740px", margin: "0 auto", padding: "40px 20px 100px" }}>
+      <button onClick={onBack} style={{ background: "transparent", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", marginBottom: "32px", padding: 0 }}>← Back</button>
+
+      {/* Header */}
+      <div style={{ marginBottom: "48px" }}>
+        <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.25em", textTransform: "uppercase", color: "#FF6B35", marginBottom: "12px" }}>◈ Northern Michigan ◈</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(36px,8vw,52px)", fontWeight: "900", color: "#FFF8EE", lineHeight: 1, marginBottom: "16px" }}>About On Stage NoMi</div>
+        <div style={{ fontFamily: "'Lora',serif", fontSize: "18px", color: "#FFC850", fontStyle: "italic" }}>Helping Northern Michigan discover live music.</div>
+      </div>
+
+      {[
+        {
+          title: "What is On Stage NoMi?",
+          body: `On Stage NoMi is a free live music calendar built specifically for Northern Michigan.
+
+Whether you're looking for a band to see this weekend, a venue to visit, or a place to promote an upcoming performance, On Stage NoMi brings local live music together in one place.
+
+My goal is simple: make it easier for venues, musicians, booking agents, and music fans to connect.`
+        },
+        {
+          title: "Why I Started On Stage NoMi",
+          body: `Like many people in Northern Michigan, I enjoy getting out to hear live music.
+
+The problem is that finding out who is playing, where they're playing, and when they're playing often means checking multiple websites, scrolling through social media, and visiting venue pages one at a time.
+
+For years, Facebook Events was how I found live music. I could open the app, see what was happening nearby, and usually find something worth checking out. When Facebook moved away from its local day-by-day events experience, discovering live music across the region became much more difficult.
+
+Even when Facebook Events worked well, it never gave you the full picture. Events only showed up if a venue, artist, or organizer took the time to create one. Many great performances were never listed, which meant a lot of people never knew they were happening.
+
+I wanted a better way to see what was happening across Northern Michigan without all the searching and scrolling.
+
+That's why I created On Stage NoMi.
+
+On Stage NoMi isn't meant to replace venues, artists, social media, or existing event calendars. It's meant to bring everything together in one place.`
+        },
+        {
+          title: "How It Works",
+          body: `On Stage NoMi is free to use and free to contribute to.`
+        },
+      ].map(({ title, body }) => (
+        <div key={title} style={{ marginBottom: "40px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+            <div style={{ width: "3px", height: "24px", background: "linear-gradient(180deg,#FFC850,#FF6B35)", borderRadius: "2px", flexShrink: 0 }} />
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", fontWeight: "700", color: "#FFF8EE" }}>{title}</div>
+          </div>
+          {body.split("\n\n").map((para, i) => (
+            <p key={i} style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginBottom: "12px" }}>{para}</p>
+          ))}
+        </div>
+      ))}
+
+      {/* How It Works - special grid layout */}
+      <div style={{ marginBottom: "40px" }}>
+        {[
+          { icon: "🎵", label: "For Music Fans", body: `Browse upcoming performances by date, venue, or artist. Discover new musicians, find something happening tonight, and keep up with live music happening across the region.
+
+On your phone, tap "Add to Home Screen" from your browser to access it just like an app — no download required.` },
+          { icon: "🏠", label: "For Venues", body: `Promote your live music schedule and reach more local residents, visitors, and music lovers throughout Northern Michigan.
+
+You can submit shows yourself or simply email me your schedule and I'll add them for you. No cost. No catch.` },
+          { icon: "🎸", label: "For Musicians and Booking Agents", body: `Share upcoming performances and help new audiences discover your music.
+
+Whether you're posting a single show or an entire summer schedule, On Stage NoMi makes it easy.` },
+          { icon: "🤘", label: "For Fans Who Want to Help", body: `You don't have to be a venue or musician to contribute. If you know about an upcoming show that isn't listed, submit it.
+
+We call these fans "Groupies" and they're a big part of what makes On Stage NoMi a community resource instead of just another directory.` },
+        ].map(({ icon, label, body }) => (
+          <div key={label} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,200,80,0.12)", borderRadius: "3px", padding: "20px 24px", marginBottom: "14px", position: "relative", overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: 0, left: 0, width: "3px", height: "100%", background: "linear-gradient(180deg,#FFC850,#FF6B35)" }} />
+            <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "10px" }}>{icon} {label}</div>
+            {body.split("\n\n").map((para, i) => (
+              <p key={i} style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#bbb", lineHeight: 1.8, marginBottom: "8px" }}>{para}</p>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {/* How to Submit */}
+      <div style={{ marginBottom: "40px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+          <div style={{ width: "3px", height: "24px", background: "linear-gradient(180deg,#FFC850,#FF6B35)", borderRadius: "2px", flexShrink: 0 }} />
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", fontWeight: "700", color: "#FFF8EE" }}>How to Submit a Show</div>
+        </div>
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginBottom: "12px" }}>Submitting a show is easy and always free.</p>
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginBottom: "12px" }}>Use the event submission form on the website or email your schedule directly to <span style={{ color: "#FFC850" }}>onstagenomi@gmail.com</span>.</p>
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginBottom: "12px" }}>If you already have multiple shows booked, just send them over and I'll take care of the rest.</p>
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8 }}>All submissions are reviewed before they go live to help keep the calendar accurate and free of spam.</p>
+      </div>
+
+      {/* Why Local Music Matters */}
+      <div style={{ marginBottom: "40px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+          <div style={{ width: "3px", height: "24px", background: "linear-gradient(180deg,#FFC850,#FF6B35)", borderRadius: "2px", flexShrink: 0 }} />
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", fontWeight: "700", color: "#FFF8EE" }}>Why Local Music Matters</div>
+        </div>
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginBottom: "16px" }}>Northern Michigan is a special place.</p>
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginBottom: "16px" }}>People come here for the beaches, boating, golf, wineries, breweries, restaurants, festivals, and small-town charm. Live music is a big part of that experience.</p>
+        {[
+          "It's the musician playing on a winery patio in Leelanau County.",
+          "It's the acoustic act at your favorite brewery.",
+          "It's the Friday night band at your favorite local spot.",
+          "It's the random Thursday night show that ends up being one of the best nights of your summer.",
+        ].map((line, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "10px" }}>
+            <div style={{ color: "#FF6B35", fontSize: "16px", marginTop: "2px", flexShrink: 0 }}>◈</div>
+            <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, margin: 0 }}>{line}</p>
+          </div>
+        ))}
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginTop: "16px", marginBottom: "12px" }}>Live music supports local businesses. It gives artists a stage and helps create the experiences that make Northern Michigan unique.</p>
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8 }}>On Stage NoMi exists to help shine a spotlight on the musicians, venues, and communities that make our local music scene so special.</p>
+      </div>
+
+      {/* Join the Community */}
+      <div style={{ background: "rgba(255,200,80,0.05)", border: "1px solid rgba(255,200,80,0.2)", borderRadius: "3px", padding: "28px 32px", marginBottom: "40px" }}>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", fontWeight: "700", color: "#FFF8EE", marginBottom: "16px" }}>Join the Community</div>
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginBottom: "16px" }}>Whether you're a venue owner, musician, booking agent, or someone simply looking for a great night out, I'd love to have you be part of On Stage NoMi.</p>
+        {["Browse the calendar.", "Discover something new.", "Submit a show.", "Help spread the word."].map((line, i) => (
+          <div key={i} style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#FFC850", lineHeight: 2, fontStyle: "italic" }}>{line}</div>
+        ))}
+      </div>
+
+      {/* Sign off */}
+      <div style={{ borderTop: "1px solid rgba(255,200,80,0.15)", paddingTop: "28px", textAlign: "center" }}>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "28px", fontWeight: "900", color: "#FFF8EE", marginBottom: "4px" }}>See you On Stage.</div>
+        <div style={{ fontFamily: "'Lora',serif", fontSize: "16px", color: "#FFC850", marginTop: "16px" }}>Kyle Edmark</div>
+        <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#888", marginTop: "4px", letterSpacing: "0.05em" }}>Founder, On Stage NoMi</div>
+        <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#555", marginTop: "4px", letterSpacing: "0.05em" }}>locally owned and operated in traverse city, michigan</div>
+      </div>
+    </div>
+  );
+}
+
 function TermsPage({ onBack }) {
   const sections = [
     ["1. Acceptance of Terms", "By accessing or using On Stage NoMi (onstagenomi.com), you agree to these Terms of Service. If you do not agree, please do not use the site."],
@@ -1651,7 +1786,7 @@ export default function App() {
           <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#777", fontStyle: "italic", marginTop: "8px" }}>Local music. Real venues. Northern Michigan.</div>
         </div>
 
-        {legalPage && (legalPage === "terms" ? <TermsPage onBack={() => setLegalPage(null)} /> : <PrivacyPage onBack={() => setLegalPage(null)} />)}
+        {legalPage && (legalPage === "terms" ? <TermsPage onBack={() => setLegalPage(null)} /> : legalPage === "privacy" ? <PrivacyPage onBack={() => setLegalPage(null)} /> : <AboutPage onBack={() => setLegalPage(null)} />)}
       {!legalPage && <>
       {/* Coming soon for all non-music sections */}
         {section !== "music" && (
@@ -1707,7 +1842,10 @@ export default function App() {
               Playing a show?{" "}
               <button onClick={() => setTab("submit")} style={{ background: "none", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", textDecoration: "underline" }}>Post it here →</button>
             </div>
-            <div style={{ marginTop: "20px", textAlign: "center", display: "flex", gap: "16px", justifyContent: "center" }}>
+            <div style={{ marginTop: "20px", textAlign: "center" }}>
+              <button onClick={() => setLegalPage("about")} style={{ background: "none", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase", padding: "8px 20px", marginBottom: "12px" }}>About On Stage NoMi</button>
+            </div>
+            <div style={{ marginTop: "8px", textAlign: "center", display: "flex", gap: "16px", justifyContent: "center" }}>
               <button onClick={() => setLegalPage("terms")} style={{ background: "none", border: "none", color: "#888", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "underline" }}>Terms of Service</button>
               <span style={{ color: "#666" }}>·</span>
               <button onClick={() => setLegalPage("privacy")} style={{ background: "none", border: "none", color: "#888", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "underline" }}>Privacy Policy</button>
