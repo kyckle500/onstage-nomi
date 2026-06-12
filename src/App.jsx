@@ -1843,7 +1843,7 @@ export default function App() {
               <button onClick={() => setTab("submit")} style={{ background: "none", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", textDecoration: "underline" }}>Post it here →</button>
             </div>
             <div style={{ marginTop: "20px", textAlign: "center" }}>
-              <button onClick={() => { setLegalPage("about"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ background: "none", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase", padding: "8px 20px", marginBottom: "12px" }}>About On Stage NoMi</button>
+              <button onClick={() => { setLegalPage("about"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ background: "none", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", cursor: "pointer", letterSpacing: "0.08em", padding: "8px 20px", marginBottom: "12px" }}>About On Stage NoMi</button>
             </div>
             <div style={{ marginTop: "8px", textAlign: "center", display: "flex", gap: "16px", justifyContent: "center" }}>
               <button onClick={() => { setLegalPage("terms"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ background: "none", border: "none", color: "#888", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", letterSpacing: "0.06em", textTransform: "uppercase", textDecoration: "underline" }}>Terms of Service</button>
