@@ -71,7 +71,99 @@ function getMonthDays(year, month) {
 function toDateStr(year, month, day) { return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`; }
 
 // ── GIG CARD ──────────────────────────────────────────────
+
+function FollowModal({ gig, onClose }) {
+  const [email, setEmail] = useState("");
+  const [followArtist, setFollowArtist] = useState(true);
+  const [followVenue, setFollowVenue] = useState(false);
+  const [status, setStatus] = useState(null); // null, "loading", "success", "error"
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async () => {
+    if (!email || !email.includes("@")) { setMessage("Please enter a valid email."); return; }
+    if (!followArtist && !followVenue) { setMessage("Please select at least one option."); return; }
+    setStatus("loading");
+    const inserts = [];
+    if (followArtist) inserts.push({ email: email.trim().toLowerCase(), type: "artist", name: gig.artist });
+    if (followVenue) inserts.push({ email: email.trim().toLowerCase(), type: "venue", name: gig.venue });
+    const { error } = await supabase.from("followers").upsert(inserts, { onConflict: "email,type,name" });
+    if (error) {
+      setStatus("error");
+      setMessage("Something went wrong. Please try again.");
+    } else {
+      setStatus("success");
+    }
+  };
+
+  return (
+    <div style={{
+      position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+      background: "rgba(0,0,0,0.85)", zIndex: 1000,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      padding: "20px",
+    }} onClick={onClose}>
+      <div style={{
+        background: "#1a1208", border: "1px solid rgba(255,200,80,0.3)",
+        borderRadius: "4px", padding: "28px 24px", maxWidth: "380px", width: "100%",
+        position: "relative",
+      }} onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} style={{ position: "absolute", top: "12px", right: "14px", background: "none", border: "none", color: "#555", fontSize: "18px", cursor: "pointer" }}>✕</button>
+
+        {status === "success" ? (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: "36px", marginBottom: "12px" }}>🎸</div>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "20px", color: "#FFC850", marginBottom: "8px" }}>You're on the list!</div>
+            <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#888", lineHeight: 1.6 }}>
+              We'll email you when {followArtist && followVenue ? `${gig.artist} or ${gig.venue}` : followArtist ? gig.artist : gig.venue} posts a new show.
+            </div>
+            <button onClick={onClose} style={{ marginTop: "20px", background: "transparent", border: "1px solid #FFC850", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", padding: "8px 20px", cursor: "pointer", borderRadius: "2px" }}>Done</button>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "18px", color: "#FFF8EE", marginBottom: "6px" }}>Get notified about upcoming shows</div>
+            <div style={{ fontFamily: "'Lora',serif", fontSize: "13px", color: "#666", marginBottom: "20px", fontStyle: "italic" }}>Choose what you want to follow</div>
+
+            <div style={{ marginBottom: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                <input type="checkbox" checked={followArtist} onChange={e => setFollowArtist(e.target.checked)} style={{ accentColor: "#FFC850", width: "16px", height: "16px" }} />
+                <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850" }}>🎸 Follow {gig.artist}</span>
+              </label>
+              <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                <input type="checkbox" checked={followVenue} onChange={e => setFollowVenue(e.target.checked)} style={{ accentColor: "#FFC850", width: "16px", height: "16px" }} />
+                <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850" }}>🏠 Follow {gig.venue}</span>
+              </label>
+            </div>
+
+            <div style={{ marginBottom: "8px" }}>
+              <label style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555", letterSpacing: "0.08em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>Your email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={e => { setEmail(e.target.value); setMessage(""); }}
+                placeholder="you@email.com"
+                style={{ ...FORM_INPUT_STYLE, fontSize: "14px" }}
+                onKeyDown={e => e.key === "Enter" && handleSubmit()}
+              />
+            </div>
+
+            {message && <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FF6B35", marginBottom: "10px" }}>⚠ {message}</div>}
+
+            <button
+              onClick={handleSubmit}
+              disabled={status === "loading"}
+              style={{ width: "100%", background: "linear-gradient(135deg,#FFC850,#FF6B35)", border: "none", borderRadius: "2px", color: "#1a0e00", fontFamily: "'Courier Prime',monospace", fontWeight: "700", letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "12px", padding: "12px", cursor: "pointer", marginTop: "8px" }}
+            >
+              {status === "loading" ? "Saving..." : "Notify Me →"}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function GigCard({ gig, compact = false, onInterested }) {
+  const [showFollow, setShowFollow] = useState(false);
   return (
     <div style={{
       background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,200,80,0.18)",
@@ -110,24 +202,40 @@ function GigCard({ gig, compact = false, onInterested }) {
           <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>
             Booked by: <span style={{ color: "#888" }}>{POSTER_ICONS[gig.posterType] || "🎵"} {gig.posterType || "Musician / Band"}</span>
           </span>
-          {onInterested && (
-            <button onClick={() => onInterested(gig.id)} style={{
+          <div style={{ display: "flex", gap: "6px" }}>
+            {onInterested && (
+              <button onClick={() => onInterested(gig.id)} style={{
+                background: "transparent",
+                border: `1px solid ${localStorage.getItem("interested_" + gig.id) ? "#FFC850" : "rgba(255,200,80,0.25)"}`,
+                borderRadius: "2px",
+                color: localStorage.getItem("interested_" + gig.id) ? "#FFC850" : "#555",
+                fontFamily: "'Courier Prime',monospace",
+                fontSize: "10px",
+                cursor: "pointer",
+                padding: "3px 8px",
+                letterSpacing: "0.06em",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+              }}>
+                🎸 {gig.interested > 0 ? gig.interested : ""} {localStorage.getItem("interested_" + gig.id) ? "Going" : "I'm Going"}
+              </button>
+            )}
+            <button onClick={() => setShowFollow(true)} style={{
               background: "transparent",
-              border: `1px solid ${localStorage.getItem("interested_" + gig.id) ? "#FFC850" : "rgba(255,200,80,0.25)"}`,
+              border: "1px solid rgba(255,200,80,0.25)",
               borderRadius: "2px",
-              color: localStorage.getItem("interested_" + gig.id) ? "#FFC850" : "#555",
+              color: "#555",
               fontFamily: "'Courier Prime',monospace",
               fontSize: "10px",
               cursor: "pointer",
               padding: "3px 8px",
               letterSpacing: "0.06em",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
             }}>
-              🎸 {gig.interested > 0 ? gig.interested : ""} {localStorage.getItem("interested_" + gig.id) ? "Going" : "I'm Going"}
+              + Follow
             </button>
-          )}
+          </div>
+          {showFollow && <FollowModal gig={gig} onClose={() => setShowFollow(false)} />}
         </div>
       </div>
     </div>
