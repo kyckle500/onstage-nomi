@@ -720,7 +720,7 @@ function ArtistField({ value, onChange, approvedGigs, label }) {
 
   const suggestions = query.length === 0 ? [] :
     Object.keys(artistCounts)
-      .filter(a => artistCounts[a] >= 2 && a.toLowerCase().includes(query.toLowerCase()) && a !== query)
+      .filter(a => artistCounts[a] >= 1 && a.toLowerCase().includes(query.toLowerCase()) && a !== query)
       .sort((a, b) => artistCounts[b] - artistCounts[a])
       .slice(0, 6);
 
@@ -782,7 +782,7 @@ function VenueField({ value, onChange, approvedGigs, posterType, posterName, lab
 
   const suggestions = query.length === 0 ? [] :
     Object.keys(venueCounts)
-      .filter(v => venueCounts[v] >= 2 && v.toLowerCase().includes(query.toLowerCase()) && v !== query)
+      .filter(v => venueCounts[v] >= 1 && v.toLowerCase().includes(query.toLowerCase()) && v !== query)
       .sort((a, b) => venueCounts[b] - venueCounts[a])
       .slice(0, 6);
 
@@ -1152,16 +1152,26 @@ function AdminPostForm({ onPost, approvedGigs = [] }) {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
           <div>
             <label style={LS}>Start Time</label>
-            <select value={startTime} onChange={e => setStartTime(e.target.value)} style={{ ...IS, cursor: "pointer" }}>
+            <select value={startTime} onChange={e => { setStartTime(e.target.value); setEndTime(""); }} style={{ ...IS, cursor: "pointer" }}>
               <option value="">Optional</option>
-              {START_OPTIONS.map(o => <option key={o.val} value={o.val} style={{ background: "#1a1208" }}>{o.label}</option>)}
+              {(() => {
+                const now = new Date();
+                const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+                const isToday = date.month && date.day ? `${date.year}-${date.month}-${date.day}` === todayStr : false;
+                const minMins = isToday ? (now.getHours() * 60 + now.getMinutes() + 30) : 0;
+                return START_OPTIONS.filter(o => {
+                  if (!isToday) return true;
+                  const [h, m] = o.val.split(":").map(Number);
+                  return (h * 60 + m) >= minMins;
+                }).map(o => <option key={o.val} value={o.val} style={{ background: "#1a1208" }}>{o.label}</option>);
+              })()}
             </select>
           </div>
           <div>
             <label style={LS}>End Time</label>
             <select value={endTime} onChange={e => setEndTime(e.target.value)} style={{ ...IS, cursor: "pointer" }}>
               <option value="">Optional</option>
-              {endOpts.map(o => <option key={o.val} value={o.val} style={{ background: "#1a1208" }}>{o.label}</option>)}
+              {getEndOptions(startTime).map(o => <option key={o.val} value={o.val} style={{ background: "#1a1208" }}>{o.label}</option>)}
             </select>
           </div>
         </div>
@@ -1280,8 +1290,12 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, on
         }
       </Section>
 
-      <Section title="Live on the Board" count={gigs.filter(g => g.status === "approved" || g.status === "cancelled").length} color="#444">
-        {gigs.filter(g => g.status === "approved" || g.status === "cancelled").sort((a,b) => (a.date||"").localeCompare(b.date||"")).map(g => (
+      {(() => {
+        const todayStr = new Date().toISOString().split("T")[0];
+        const liveShows = gigs.filter(g => (g.status === "approved" || g.status === "cancelled") && (g.date||"") >= todayStr);
+        return (
+      <Section title="Live on the Board" count={liveShows.length} color="#444">
+        {liveShows.sort((a,b) => (a.date||"").localeCompare(b.date||"")).map(g => (
           <div key={g.id} style={{ ...cardStyle, display: "flex", justifyContent: "space-between", alignItems: "center", opacity: g.status === "cancelled" ? 0.6 : 1 }}>
             <div>
               <span style={{ fontFamily: "'Playfair Display',serif", fontSize: "14px", color: "#FFF8EE" }}>{g.artist}</span>
@@ -1296,6 +1310,8 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, on
           </div>
         ))}
       </Section>
+        );
+      })()}
     </div>
   );
 }
