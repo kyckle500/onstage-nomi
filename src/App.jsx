@@ -1923,7 +1923,7 @@ export default function App() {
             )}
           </button>
         ))}
-      </div>
+      </div>}
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lora:ital,wght@0,400;1,400&family=Courier+Prime:wght@400;700&display=swap');
