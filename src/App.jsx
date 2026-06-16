@@ -210,7 +210,7 @@ function CalendarView({ gigs }) {
           </div>
           {selectedGigs.length === 0
             ? <div style={{ fontFamily: "'Lora',serif", color: "#555", fontStyle: "italic", fontSize: "14px" }}>Nothing posted yet for this day.</div>
-            : <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>{selectedGigs.sort((a, b) => a.time.localeCompare(b.time)).map(g => <GigCard key={g.id} gig={g} compact />)}</div>
+            : <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>{selectedGigs.sort((a, b) => a.time.localeCompare(b.time)).map(g => <GigCard key={g.id} gig={g} compact onInterested={onInterested} />)}</div>
           }
         </div>
       )}
@@ -277,7 +277,7 @@ function ListView({ gigs, onInterested }) {
               {formatDate(date)}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {grouped[date].map(g => <GigCard key={g.id} gig={g} />)}
+              {grouped[date].map(g => <GigCard key={g.id} gig={g} onInterested={onInterested} />)}
             </div>
           </div>
         ))
@@ -334,7 +334,7 @@ function GigGroup({ gigs }) {
             {formatDate(date)}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {grouped[date].map(g => <GigCard key={g.id} gig={g} />)}
+            {grouped[date].map(g => <GigCard key={g.id} gig={g} onInterested={onInterested} />)}
           </div>
         </div>
       ))}
@@ -358,7 +358,7 @@ function TodayView({ gigs, onInterested }) {
       <FilterRow gigs={baseGigs} filterVenue={filterVenue} setFilterVenue={setFilterVenue} filterArtist={filterArtist} setFilterArtist={setFilterArtist} />
       {filtered.length === 0
         ? <div style={{ textAlign: "center", padding: "60px 0", fontFamily: "'Lora',serif", color: "#555", fontStyle: "italic" }}>Nothing posted for today yet.</div>
-        : <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>{filtered.map(g => <GigCard key={g.id} gig={g} />)}</div>
+        : <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>{filtered.map(g => <GigCard key={g.id} gig={g} onInterested={onInterested} />)}</div>
       }
     </div>
   );
