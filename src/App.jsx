@@ -300,11 +300,7 @@ function CalendarView({ gigs, onInterested }) {
               onMouseLeave={e => { if (hasShows && !isSelected) e.currentTarget.style.background = "rgba(255,107,53,0.08)"; }}
             >
               <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "13px", color: isSelected ? "#FFC850" : isToday ? "#FFC850" : hasShows ? "#FFF8EE" : "#555", fontWeight: hasShows ? "700" : "400" }}>{day}</div>
-              {hasShows && <div style={{ display: "flex", gap: "2px", marginTop: "3px" }}>
-                {Array.from({ length: Math.min(count, 4) }).map((_, idx) => (
-                  <div key={idx} style={{ width: "4px", height: "4px", borderRadius: "50%", background: isSelected ? "#FFC850" : "#FF6B35" }} />
-                ))}
-              </div>}
+              {hasShows && <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: isSelected ? "#FFC850" : "#FF6B35", marginTop: "2px", fontWeight: "700" }}>{count}</div>}
             </div>
           );
         })}
