@@ -1895,8 +1895,8 @@ export default function App() {
       }
       </div>
 
-      {/* Bottom Nav */}
-      <div style={{
+      {/* Bottom Nav - hide when legal page is showing */}
+      {!legalPage && <div style={{
         position: "fixed", bottom: 0, left: 0, right: 0,
         background: "rgba(10,6,0,0.97)",
         borderTop: "1px solid rgba(255,200,80,0.15)",
