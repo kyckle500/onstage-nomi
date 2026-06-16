@@ -71,7 +71,7 @@ function getMonthDays(year, month) {
 function toDateStr(year, month, day) { return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`; }
 
 // ── GIG CARD ──────────────────────────────────────────────
-function GigCard({ gig, compact = false }) {
+function GigCard({ gig, compact = false, onInterested }) {
   return (
     <div style={{
       background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,200,80,0.18)",
@@ -106,9 +106,29 @@ function GigCard({ gig, compact = false }) {
       )}
       {gig.description && !compact && <div style={{ fontFamily: "'Lora',serif", fontSize: "13px", color: "#bbb", lineHeight: 1.6 }}>{gig.description}</div>}
       <div style={{ marginTop: "2px" }}>
-        <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>
-          Booked by: <span style={{ color: "#888" }}>{POSTER_ICONS[gig.posterType] || "🎵"} {gig.posterType || "Musician / Band"}</span>
-        </span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#555" }}>
+            Booked by: <span style={{ color: "#888" }}>{POSTER_ICONS[gig.posterType] || "🎵"} {gig.posterType || "Musician / Band"}</span>
+          </span>
+          {onInterested && (
+            <button onClick={() => onInterested(gig.id)} style={{
+              background: "transparent",
+              border: `1px solid ${localStorage.getItem("interested_" + gig.id) ? "#FFC850" : "rgba(255,200,80,0.25)"}`,
+              borderRadius: "2px",
+              color: localStorage.getItem("interested_" + gig.id) ? "#FFC850" : "#555",
+              fontFamily: "'Courier Prime',monospace",
+              fontSize: "10px",
+              cursor: "pointer",
+              padding: "3px 8px",
+              letterSpacing: "0.06em",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+            }}>
+              🎸 {gig.interested > 0 ? gig.interested : ""} {localStorage.getItem("interested_" + gig.id) ? "Going" : "I'm Going"}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -205,7 +225,7 @@ function CalendarView({ gigs }) {
 }
 
 // ── LIST VIEW ─────────────────────────────────────────────
-function ListView({ gigs }) {
+function ListView({ gigs, onInterested }) {
   const [filterCity, setFilterCity] = useState("All");
   const [filterVenue, setFilterVenue] = useState("All");
   const [filterArtist, setFilterArtist] = useState("All");
@@ -322,7 +342,7 @@ function GigGroup({ gigs }) {
   );
 }
 
-function TodayView({ gigs }) {
+function TodayView({ gigs, onInterested }) {
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
   const [filterVenue, setFilterVenue] = useState("All");
@@ -344,7 +364,7 @@ function TodayView({ gigs }) {
   );
 }
 
-function WeekendView({ gigs }) {
+function WeekendView({ gigs, onInterested }) {
   const today = new Date();
   const next3 = [0, 1, 2].map(offset => {
     const d = new Date(today);
@@ -1610,6 +1630,7 @@ export default function App() {
   // Load gigs from Supabase on mount
   const mapGig = (d) => ({
     ...d,
+    interested: d.interested || 0,
     endTime: d.endTime || d.endtime || "",
     posterType: d.posterType || d.postertype || "Musician / Band",
     posterName: d.posterName || d.postername || "",
@@ -1714,6 +1735,16 @@ export default function App() {
   const handleDelete = async (id) => {
     await supabase.from("shows").delete().eq("id", id);
     setGigs(prev => prev.filter(g => g.id !== id));
+  };
+
+  const handleInterested = async (id) => {
+    const key = `interested_${id}`;
+    if (localStorage.getItem(key)) return; // already clicked
+    localStorage.setItem(key, "1");
+    const gig = gigs.find(g => g.id === id);
+    const current = gig?.interested || 0;
+    await supabase.from("shows").update({ interested: current + 1 }).eq("id", id);
+    setGigs(prev => prev.map(g => g.id === id ? { ...g, interested: (g.interested || 0) + 1 } : g));
   };
 
   const handleCancel = async (id) => {
@@ -1843,9 +1874,9 @@ export default function App() {
                 <button key={id} onClick={() => setBoardView(id)} style={{ background: boardView === id ? "rgba(255,200,80,0.12)" : "transparent", border: `1px solid ${boardView === id ? "#FFC850" : "rgba(255,255,255,0.1)"}`, borderRadius: "2px", color: boardView === id ? "#FFC850" : "#555", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.07em", textTransform: "uppercase", padding: "7px 14px", cursor: "pointer", transition: "all 0.15s" }}>{label}</button>
               ))}
             </div>
-            {boardView === "today" && <TodayView gigs={approved} />}
-            {boardView === "weekend" && <WeekendView gigs={approved} />}
-            {boardView === "list" && <ListView gigs={approved} />}
+            {boardView === "today" && <TodayView gigs={approved} onInterested={handleInterested} />}
+            {boardView === "weekend" && <WeekendView gigs={approved} onInterested={handleInterested} />}
+            {boardView === "list" && <ListView gigs={approved} onInterested={handleInterested} />}
             {boardView === "calendar" && <CalendarView gigs={approved} />}
             <div style={{ marginTop: "40px", textAlign: "center", fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#333" }}>
               Playing a show?{" "}
