@@ -1631,6 +1631,15 @@ export default function App() {
     loadGigs();
   }, []);
   const [adminUnlocked, setAdminUnlocked] = useState(false);
+
+  // Auto-unlock admin via localStorage (set by /admin696969 redirect page)
+  useEffect(() => {
+    if (localStorage.getItem("onstage_admin") === "696969") {
+      setAdminUnlocked(true);
+      setTab("admin");
+      localStorage.removeItem("onstage_admin");
+    }
+  }, []);
   const [adminPass, setAdminPass] = useState("");
   const [adminError, setAdminError] = useState(false);
   const [tapCount, setTapCount] = useState(0);
