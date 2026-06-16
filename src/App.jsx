@@ -1057,7 +1057,7 @@ function SubmitForm({ onSubmit, approvedGigs = [] }) {
 
 // ── ADMIN PANEL ───────────────────────────────────────────
 
-function AdminPostForm({ onPost }) {
+function AdminPostForm({ onPost, approvedGigs = [] }) {
   const [artist, setArtist] = useState("");
   const [venue, setVenue] = useState("");
   const [city, setCity] = useState("");
@@ -1119,14 +1119,12 @@ function AdminPostForm({ onPost }) {
 
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         <div>
-          <label style={LS}>Artist / Band *</label>
-          <input value={artist} onChange={e => setArtist(e.target.value)} placeholder="Required" style={IS} onFocus={e => e.target.style.borderColor="#FFC850"} onBlur={e => e.target.style.borderColor="rgba(255,200,80,0.22)"} />
+          <ArtistField value={artist} onChange={setArtist} approvedGigs={approvedGigs} label="Artist / Band *" />
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
           <div>
-            <label style={LS}>Venue</label>
-            <input value={venue} onChange={e => setVenue(e.target.value)} placeholder="Optional" style={IS} onFocus={e => e.target.style.borderColor="#FFC850"} onBlur={e => e.target.style.borderColor="rgba(255,200,80,0.22)"} />
+            <VenueField value={venue} onChange={setVenue} approvedGigs={approvedGigs} label="Venue" />
           </div>
           <CityField value={city} onChange={setCity} />
         </div>
@@ -1197,7 +1195,7 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, on
 
   return (
     <div>
-      <AdminPostForm onPost={onAdminPost} />
+      <AdminPostForm onPost={onAdminPost} approvedGigs={gigs.filter(g => g.status === "approved")} />
       <Section title="⚠ Possible Duplicates" count={flagged.length} color="#FF6B35">
         {flagged.length === 0
           ? <div style={{ fontFamily: "'Lora',serif", color: "#444", fontSize: "13px" }}>None flagged.</div>
