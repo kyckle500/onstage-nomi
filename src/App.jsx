@@ -1685,6 +1685,72 @@ We call these fans "Groupies" and they're a big part of what makes On Stage NoMi
   );
 }
 
+
+function UnsubscribePage({ onBack }) {
+  const [status, setStatus] = useState("loading");
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email");
+    const type = params.get("type");
+    const name = params.get("name");
+
+    if (!email || !type || !name) {
+      setStatus("error");
+      setMessage("Invalid unsubscribe link.");
+      return;
+    }
+
+    const doUnsubscribe = async () => {
+      const { error } = await supabase
+        .from("followers")
+        .delete()
+        .eq("email", decodeURIComponent(email))
+        .eq("type", decodeURIComponent(type))
+        .eq("name", decodeURIComponent(name));
+
+      if (error) {
+        setStatus("error");
+        setMessage("Something went wrong. Please try again.");
+      } else {
+        setStatus("success");
+        setMessage(`You've been unsubscribed from ${decodeURIComponent(name)} alerts.`);
+        window.history.replaceState({}, "", "/");
+      }
+    };
+
+    doUnsubscribe();
+  }, []);
+
+  return (
+    <div style={{ maxWidth: "500px", margin: "0 auto", padding: "80px 20px", textAlign: "center" }}>
+      <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.25em", textTransform: "uppercase", color: "#FF6B35", marginBottom: "20px" }}>◈ Northern Michigan ◈</div>
+      <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "32px", fontWeight: "900", color: "#FFF8EE", marginBottom: "24px" }}>On Stage NoMi</div>
+
+      {status === "loading" && (
+        <div style={{ fontFamily: "'Lora',serif", fontSize: "16px", color: "#888", fontStyle: "italic" }}>Processing your request...</div>
+      )}
+
+      {status === "success" && (
+        <>
+          <div style={{ fontSize: "48px", marginBottom: "16px" }}>✓</div>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", color: "#FFC850", marginBottom: "12px" }}>Unsubscribed</div>
+          <div style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#888", lineHeight: 1.7, marginBottom: "28px" }}>{message}</div>
+          <button onClick={onBack} style={{ background: "transparent", border: "1px solid #FFC850", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", padding: "10px 24px", cursor: "pointer", borderRadius: "2px" }}>Back to On Stage NoMi</button>
+        </>
+      )}
+
+      {status === "error" && (
+        <>
+          <div style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#FF6B35", marginBottom: "24px" }}>{message}</div>
+          <button onClick={onBack} style={{ background: "transparent", border: "1px solid #FFC850", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", padding: "10px 24px", cursor: "pointer", borderRadius: "2px" }}>Back to On Stage NoMi</button>
+        </>
+      )}
+    </div>
+  );
+}
+
 function TermsPage({ onBack }) {
   const sections = [
     ["1. Acceptance of Terms", "By accessing or using On Stage NoMi (onstagenomi.com), you agree to these Terms of Service. If you do not agree, please do not use the site."],
@@ -1781,6 +1847,11 @@ export default function App() {
       setAdminUnlocked(true);
       setTab("admin");
       localStorage.removeItem("onstage_admin");
+    }
+    // Check for unsubscribe link
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("email") && params.get("type") && params.get("name")) {
+      setLegalPage("unsubscribe");
     }
   }, []);
   const [adminPass, setAdminPass] = useState("");
@@ -1953,7 +2024,7 @@ export default function App() {
           <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#777", fontStyle: "italic", marginTop: "8px" }}>Local music. Real venues. Northern Michigan.</div>
         </div>
 
-        {legalPage && (legalPage === "terms" ? <TermsPage onBack={() => setLegalPage(null)} /> : legalPage === "privacy" ? <PrivacyPage onBack={() => setLegalPage(null)} /> : <AboutPage onBack={() => setLegalPage(null)} />)}
+        {legalPage && (legalPage === "terms" ? <TermsPage onBack={() => setLegalPage(null)} /> : legalPage === "privacy" ? <PrivacyPage onBack={() => setLegalPage(null)} /> : legalPage === "unsubscribe" ? <UnsubscribePage onBack={() => setLegalPage(null)} /> : <AboutPage onBack={() => setLegalPage(null)} />)}
       {!legalPage && <>
       {/* Coming soon for all non-music sections */}
         {section !== "music" && (
