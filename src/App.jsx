@@ -135,7 +135,7 @@ function GigCard({ gig, compact = false, onInterested }) {
 }
 
 // ── CALENDAR VIEW ─────────────────────────────────────────
-function CalendarView({ gigs }) {
+function CalendarView({ gigs, onInterested }) {
   const today = new Date();
   const [calYear, setCalYear] = useState(today.getFullYear());
   const [calMonth, setCalMonth] = useState(today.getMonth());
@@ -324,7 +324,7 @@ function FilterRow({ gigs, filterVenue, setFilterVenue, filterArtist, setFilterA
   );
 }
 
-function GigGroup({ gigs }) {
+function GigGroup({ gigs, onInterested }) {
   const grouped = gigs.reduce((acc, g) => { if (!acc[g.date]) acc[g.date] = []; acc[g.date].push(g); return acc; }, {});
   return (
     <>
@@ -385,7 +385,7 @@ function WeekendView({ gigs, onInterested }) {
       <FilterRow gigs={baseGigs} filterVenue={filterVenue} setFilterVenue={setFilterVenue} filterArtist={filterArtist} setFilterArtist={setFilterArtist} />
       {filtered.length === 0
         ? <div style={{ textAlign: "center", padding: "60px 0", fontFamily: "'Lora',serif", color: "#555", fontStyle: "italic" }}>Nothing matches your filters.</div>
-        : <GigGroup gigs={filtered} />
+        : <GigGroup gigs={filtered} onInterested={onInterested} />
       }
     </div>
   );
@@ -1877,7 +1877,7 @@ export default function App() {
             {boardView === "today" && <TodayView gigs={approved} onInterested={handleInterested} />}
             {boardView === "weekend" && <WeekendView gigs={approved} onInterested={handleInterested} />}
             {boardView === "list" && <ListView gigs={approved} onInterested={handleInterested} />}
-            {boardView === "calendar" && <CalendarView gigs={approved} />}
+            {boardView === "calendar" && <CalendarView gigs={approved} onInterested={handleInterested} />}
             <div style={{ marginTop: "40px", textAlign: "center", fontFamily: "'Courier Prime',monospace", fontSize: "10px", color: "#333" }}>
               Playing a show?{" "}
               <button onClick={() => setTab("submit")} style={{ background: "none", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", textDecoration: "underline" }}>Post it here →</button>
