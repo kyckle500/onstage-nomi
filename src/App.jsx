@@ -1739,12 +1739,17 @@ export default function App() {
 
   const handleInterested = async (id) => {
     const key = `interested_${id}`;
-    if (localStorage.getItem(key)) return; // already clicked
-    localStorage.setItem(key, "1");
     const gig = gigs.find(g => g.id === id);
     const current = gig?.interested || 0;
-    await supabase.from("shows").update({ interested: current + 1 }).eq("id", id);
-    setGigs(prev => prev.map(g => g.id === id ? { ...g, interested: (g.interested || 0) + 1 } : g));
+    if (localStorage.getItem(key)) {
+      localStorage.removeItem(key);
+      await supabase.from("shows").update({ interested: Math.max(0, current - 1) }).eq("id", id);
+      setGigs(prev => prev.map(g => g.id === id ? { ...g, interested: Math.max(0, (g.interested || 0) - 1) } : g));
+    } else {
+      localStorage.setItem(key, "1");
+      await supabase.from("shows").update({ interested: current + 1 }).eq("id", id);
+      setGigs(prev => prev.map(g => g.id === id ? { ...g, interested: (g.interested || 0) + 1 } : g));
+    }
   };
 
   const handleCancel = async (id) => {
