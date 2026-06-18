@@ -1571,8 +1571,8 @@ function FeaturesPage({ onBack, onBrowse, onPost }) {
             { icon: "🎸", title: "Browse Live Music", body: "Search upcoming shows by date, venue, artist, or city. Find something happening tonight or plan ahead for the whole summer." },
             { icon: "✅", title: "I'm Going", body: "Hit the I'm Going button on any show to mark your interest. The count is public — helping trending acts get noticed." },
             { icon: "🔔", title: "Follow Artists & Venues", body: "Follow your favorite artists and venues and get an email the moment they post a new show. Never miss a performance again." },
-            { icon: "📱", title: "Add to Your Phone", body: "Add On Stage NoMi to your home screen just like an app — no download required. Open Safari or Chrome, visit onstagenomi.com, and tap Add to Home Screen." },
-            { icon: "🗓️", title: "Calendar View", body: "Switch to the calendar view to see which dates have shows and how many. Tap any date to see what's on." },
+            { icon: "📱", title: "Add to Your Phone", body: "Add On Stage NoMi to your home screen just like an app — no download required. Look for the Add to iPhone or Add to Android buttons at the top of the page." },
+            { icon: "🗓️", title: "Calendar View", body: "Switch to the calendar view to see which dates have shows and how many. Tap any date to see who's playing." },
           ].map(({ icon, title, body }) => (
             <div key={title} style={{ display: "flex", gap: "14px", padding: "16px 18px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,200,80,0.1)", borderRadius: "3px" }}>
               <div style={{ fontSize: "22px", flexShrink: 0, marginTop: "2px" }}>{icon}</div>
@@ -1593,11 +1593,11 @@ function FeaturesPage({ onBack, onBrowse, onPost }) {
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {[
-            { icon: "📋", title: "Post a Show for Free", body: "Submit a single show or your entire summer schedule in one go. Always free, no account required." },
+            { icon: "📋", title: "Post a Show for Free", body: "Submit a single show or your entire summer schedule in one go. Already have a full schedule booked? Email it to onstagenomi@gmail.com and we'll take care of the rest. Always free, no account required." },
             { icon: "⚡", title: "Go Live Instantly", body: "Trusted posters go live immediately — no waiting for approval. Build your reputation and get verified fast." },
             { icon: "📧", title: "Reach Your Fans", body: "Every follower of your artist name or venue gets an email the moment you post a new show. Your audience grows automatically." },
             { icon: "🤘", title: "Groupies Welcome", body: "Even fans can post shows on your behalf. We call them Groupies — and they help fill in the gaps when venues and artists are too busy to post." },
-            { icon: "❌", title: "Cancel Anytime", body: "Need to cancel a show? Email us or use the form and we'll mark it as cancelled so fans know — not just remove it and leave people wondering." },
+            { icon: "❌", title: "Cancel Anytime", body: "Need to cancel a show? Email us at onstagenomi@gmail.com and we'll mark it as cancelled so fans know instead of just removing it and leaving people wondering." },
           ].map(({ icon, title, body }) => (
             <div key={title} style={{ display: "flex", gap: "14px", padding: "16px 18px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,200,80,0.1)", borderRadius: "3px" }}>
               <div style={{ fontSize: "22px", flexShrink: 0, marginTop: "2px" }}>{icon}</div>
