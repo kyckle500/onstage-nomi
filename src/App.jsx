@@ -1547,6 +1547,108 @@ function GarageSaleSection() {
 
 
 
+
+function FeaturesPage({ onBack, onBrowse, onPost }) {
+  return (
+    <div style={{ maxWidth: "740px", margin: "0 auto", padding: "40px 20px 100px" }}>
+      <button onClick={onBack} style={{ background: "transparent", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", marginBottom: "32px", padding: 0 }}>← Back</button>
+
+      {/* Header */}
+      <div style={{ marginBottom: "48px" }}>
+        <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", letterSpacing: "0.25em", textTransform: "uppercase", color: "#FF6B35", marginBottom: "12px" }}>◈ Northern Michigan ◈</div>
+        <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(32px,7vw,48px)", fontWeight: "900", color: "#FFF8EE", lineHeight: 1, marginBottom: "16px" }}>What can On Stage NoMi do?</div>
+        <div style={{ fontFamily: "'Lora',serif", fontSize: "17px", color: "#FFC850", fontStyle: "italic" }}>Everything you need to discover and share live music across Northern Michigan.</div>
+      </div>
+
+      {/* For Fans */}
+      <div style={{ marginBottom: "40px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+          <div style={{ width: "3px", height: "24px", background: "linear-gradient(180deg,#FFC850,#FF6B35)", borderRadius: "2px", flexShrink: 0 }} />
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "24px", fontWeight: "700", color: "#FFF8EE" }}>For Fans</div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {[
+            { icon: "🎸", title: "Browse Live Music", body: "Search upcoming shows by date, venue, artist, or city. Find something happening tonight or plan ahead for the whole summer." },
+            { icon: "✅", title: "I'm Going", body: "Hit the I'm Going button on any show to mark your interest. The count is public — helping trending acts get noticed." },
+            { icon: "🔔", title: "Follow Artists & Venues", body: "Follow your favorite artists and venues and get an email the moment they post a new show. Never miss a performance again." },
+            { icon: "📱", title: "Add to Your Phone", body: "Add On Stage NoMi to your home screen just like an app — no download required. Open Safari or Chrome, visit onstagenomi.com, and tap Add to Home Screen." },
+            { icon: "🗓️", title: "Calendar View", body: "Switch to the calendar view to see which dates have shows and how many. Tap any date to see what's on." },
+          ].map(({ icon, title, body }) => (
+            <div key={title} style={{ display: "flex", gap: "14px", padding: "16px 18px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,200,80,0.1)", borderRadius: "3px" }}>
+              <div style={{ fontSize: "22px", flexShrink: 0, marginTop: "2px" }}>{icon}</div>
+              <div>
+                <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "6px" }}>{title}</div>
+                <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#bbb", lineHeight: 1.7 }}>{body}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* For Venues & Musicians */}
+      <div style={{ marginBottom: "40px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+          <div style={{ width: "3px", height: "24px", background: "linear-gradient(180deg,#FFC850,#FF6B35)", borderRadius: "2px", flexShrink: 0 }} />
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "24px", fontWeight: "700", color: "#FFF8EE" }}>For Venues & Musicians</div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {[
+            { icon: "📋", title: "Post a Show for Free", body: "Submit a single show or your entire summer schedule in one go. Always free, no account required." },
+            { icon: "⚡", title: "Go Live Instantly", body: "Trusted posters go live immediately — no waiting for approval. Build your reputation and get verified fast." },
+            { icon: "📧", title: "Reach Your Fans", body: "Every follower of your artist name or venue gets an email the moment you post a new show. Your audience grows automatically." },
+            { icon: "🤘", title: "Groupies Welcome", body: "Even fans can post shows on your behalf. We call them Groupies — and they help fill in the gaps when venues and artists are too busy to post." },
+            { icon: "❌", title: "Cancel Anytime", body: "Need to cancel a show? Email us or use the form and we'll mark it as cancelled so fans know — not just remove it and leave people wondering." },
+          ].map(({ icon, title, body }) => (
+            <div key={title} style={{ display: "flex", gap: "14px", padding: "16px 18px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,200,80,0.1)", borderRadius: "3px" }}>
+              <div style={{ fontSize: "22px", flexShrink: 0, marginTop: "2px" }}>{icon}</div>
+              <div>
+                <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "6px" }}>{title}</div>
+                <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#bbb", lineHeight: 1.7 }}>{body}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Coming Soon */}
+      <div style={{ marginBottom: "48px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+          <div style={{ width: "3px", height: "24px", background: "linear-gradient(180deg,#FFC850,#FF6B35)", borderRadius: "2px", flexShrink: 0 }} />
+          <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "24px", fontWeight: "700", color: "#FFF8EE" }}>Coming Soon</div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {[
+            { icon: "🎤", title: "Karaoke Nights", body: "Find karaoke happening across Northern Michigan — same easy calendar, same free listings." },
+            { icon: "🧠", title: "Trivia Nights", body: "Discover trivia nights at your favorite local spots. Coming to On Stage NoMi soon." },
+            { icon: "📊", title: "The Charts", body: "See which artists and venues have the most followers, which shows are trending, and who's hot this month across NMI." },
+          ].map(({ icon, title, body }) => (
+            <div key={title} style={{ display: "flex", gap: "14px", padding: "16px 18px", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(255,200,80,0.15)", borderRadius: "3px", opacity: 0.8 }}>
+              <div style={{ fontSize: "22px", flexShrink: 0, marginTop: "2px" }}>{icon}</div>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+                  <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "12px", color: "#FFC850", letterSpacing: "0.08em", textTransform: "uppercase" }}>{title}</div>
+                  <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "9px", color: "#FF6B35", letterSpacing: "0.1em", textTransform: "uppercase", border: "1px solid rgba(255,107,53,0.4)", borderRadius: "2px", padding: "1px 5px" }}>Soon</div>
+                </div>
+                <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#888", lineHeight: 1.7 }}>{body}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+        <button onClick={onBrowse} style={{ flex: 1, minWidth: "160px", background: "linear-gradient(135deg,#FFC850,#FF6B35)", border: "none", borderRadius: "2px", color: "#1a0e00", fontFamily: "'Courier Prime',monospace", fontWeight: "700", letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "12px", padding: "14px 24px", cursor: "pointer" }}>
+          Browse Shows →
+        </button>
+        <button onClick={onPost} style={{ flex: 1, minWidth: "160px", background: "transparent", border: "1px solid #FFC850", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontWeight: "700", letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "12px", padding: "14px 24px", cursor: "pointer" }}>
+          Post a Show →
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function AboutPage({ onBack }) {
   return (
     <div style={{ maxWidth: "740px", margin: "0 auto", padding: "40px 20px 100px" }}>
@@ -2020,7 +2122,7 @@ export default function App() {
           <div style={{ fontFamily: "'Lora',serif", fontSize: "14px", color: "#777", fontStyle: "italic", marginTop: "8px" }}>Local music. Real venues. Northern Michigan.</div>
         </div>
 
-        {legalPage && (legalPage === "terms" ? <TermsPage onBack={() => setLegalPage(null)} /> : legalPage === "privacy" ? <PrivacyPage onBack={() => setLegalPage(null)} /> : legalPage === "unsubscribe" ? <UnsubscribePage onBack={() => setLegalPage(null)} /> : <AboutPage onBack={() => setLegalPage(null)} />)}
+        {legalPage && (legalPage === "terms" ? <TermsPage onBack={() => setLegalPage(null)} /> : legalPage === "privacy" ? <PrivacyPage onBack={() => setLegalPage(null)} /> : legalPage === "unsubscribe" ? <UnsubscribePage onBack={() => setLegalPage(null)} /> : legalPage === "features" ? <FeaturesPage onBack={() => setLegalPage(null)} onBrowse={() => { setLegalPage(null); setTab("board"); }} onPost={() => { setLegalPage(null); setTab("submit"); }} /> : <AboutPage onBack={() => setLegalPage(null)} />)}
       {!legalPage && <>
       {/* Coming soon for all non-music sections */}
         {section !== "music" && (
@@ -2076,7 +2178,8 @@ export default function App() {
               Playing a show?{" "}
               <button onClick={() => setTab("submit")} style={{ background: "none", border: "none", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "10px", cursor: "pointer", textDecoration: "underline" }}>Post it here →</button>
             </div>
-            <div style={{ marginTop: "20px", textAlign: "center" }}>
+            <div style={{ marginTop: "20px", textAlign: "center", display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+              <button onClick={() => { setLegalPage("features"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ background: "none", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", cursor: "pointer", letterSpacing: "0.08em", padding: "8px 20px", marginBottom: "12px" }}>Features</button>
               <button onClick={() => { setLegalPage("about"); window.scrollTo({ top: 0, behavior: "smooth" }); }} style={{ background: "none", border: "1px solid rgba(255,200,80,0.3)", borderRadius: "2px", color: "#FFC850", fontFamily: "'Courier Prime',monospace", fontSize: "11px", cursor: "pointer", letterSpacing: "0.08em", padding: "8px 20px", marginBottom: "12px" }}>About On Stage NoMi</button>
             </div>
             <div style={{ marginTop: "8px", textAlign: "center", display: "flex", gap: "16px", justifyContent: "center" }}>
