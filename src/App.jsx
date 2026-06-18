@@ -1074,7 +1074,7 @@ function AdminPostForm({ onPost, approvedGigs = [] }) {
       time: startTime || "19:00",
       endTime: endTime || "",
       description,
-      posterType: "Venue",
+      posterType: "Admin",
       posterName: "On Stage NoMi",
       posterEmail: "onstagenomi@gmail.com",
       status: "approved",
