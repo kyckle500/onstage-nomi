@@ -1977,7 +1977,19 @@ export default function App() {
   };
 
   const today = new Date().toISOString().split("T")[0];
-  const approved = gigs.filter(g => (g.status === "approved" || g.status === "cancelled") && g.date >= today);
+  const now = new Date();
+  const approved = gigs.filter(g => {
+    if (g.status !== "approved" && g.status !== "cancelled") return false;
+    if (g.date > today) return true;
+    if (g.date < today) return false;
+    // Same day — keep visible until 1 hour after end time (or start time if no end)
+    const endStr = g.endTime || g.endtime || g.time;
+    if (!endStr) return true;
+    const [h, m] = endStr.split(":").map(Number);
+    const showEnd = new Date();
+    showEnd.setHours(h + 1, m, 0, 0);
+    return now < showEnd;
+  });
   const pendingCount = gigs.filter(g => g.status === "pending").length;
   const flaggedCount = gigs.filter(g => g.status === "pending" && g.duplicateFlag).length;
 
