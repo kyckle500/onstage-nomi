@@ -1185,7 +1185,68 @@ function AdminPostForm({ onPost, approvedGigs = [] }) {
   );
 }
 
-function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, onBatchApprove, onAdminPost, onTrust, onUntrust, trustedEmails = [] }) {
+function EditableShowRow({ gig, onApprove, onReject, onEdit }) {
+  const [editing, setEditing] = useState(false);
+  const [artist, setArtist] = useState(gig.artist);
+  const [venue, setVenue] = useState(gig.venue);
+  const [city, setCity] = useState(gig.city);
+  const [date, setDate] = useState(gig.date);
+  const [time, setTime] = useState(gig.time);
+
+  const IS = { ...FORM_INPUT_STYLE, fontSize: "12px", height: "30px", padding: "0 8px" };
+
+  const handleSave = () => {
+    onEdit(gig.id, { artist, venue, city, date, time });
+    setEditing(false);
+  };
+
+  if (editing) return (
+    <div style={{ background: "rgba(255,200,80,0.05)", border: "1px solid rgba(255,200,80,0.2)", borderRadius: "3px", padding: "10px 12px", marginBottom: "4px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", marginBottom: "8px" }}>
+        <div>
+          <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "9px", color: "#555", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "3px" }}>Artist</div>
+          <input value={artist} onChange={e => setArtist(e.target.value)} style={IS} />
+        </div>
+        <div>
+          <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "9px", color: "#555", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "3px" }}>Venue</div>
+          <input value={venue} onChange={e => setVenue(e.target.value)} style={IS} />
+        </div>
+        <div>
+          <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "9px", color: "#555", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "3px" }}>City</div>
+          <input value={city} onChange={e => setCity(e.target.value)} style={IS} />
+        </div>
+        <div>
+          <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "9px", color: "#555", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "3px" }}>Date</div>
+          <input value={date} onChange={e => setDate(e.target.value)} placeholder="YYYY-MM-DD" style={IS} />
+        </div>
+        <div>
+          <div style={{ fontFamily: "'Courier Prime',monospace", fontSize: "9px", color: "#555", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "3px" }}>Time</div>
+          <input value={time} onChange={e => setTime(e.target.value)} placeholder="HH:MM" style={IS} />
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: "6px" }}>
+        <Btn label="💾 Save" onClick={handleSave} accent />
+        <Btn label="Cancel" onClick={() => setEditing(false)} />
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)", padding: "8px 12px", borderRadius: "2px" }}>
+      <div>
+        <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FFC850" }}>{formatDate(gig.date)}</span>
+        <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#666", marginLeft: "8px" }}>{formatTime(gig.time)} · {gig.venue}, {gig.city}</span>
+      </div>
+      <div style={{ display: "flex", gap: "5px" }}>
+        <Btn label="✓" onClick={() => onApprove(gig.id)} accent />
+        <Btn label="✏️" onClick={() => setEditing(true)} />
+        <Btn label="✕" onClick={() => onReject(gig.id)} />
+      </div>
+    </div>
+  );
+}
+
+function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, onBatchApprove, onAdminPost, onTrust, onUntrust, trustedEmails = [], onEdit }) {
   const pending = gigs.filter(g => g.status === "pending");
   const flagged = pending.filter(g => g.duplicateFlag);
   const clean = pending.filter(g => !g.duplicateFlag);
@@ -1255,16 +1316,7 @@ function AdminPanel({ gigs, onApprove, onReject, onDelete, onCancel, onMerge, on
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 {batchGigs.map(g => (
-                  <div key={g.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)", padding: "8px 12px", borderRadius: "2px" }}>
-                    <div>
-                      <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#FFC850" }}>{formatDate(g.date)}</span>
-                      <span style={{ fontFamily: "'Courier Prime',monospace", fontSize: "11px", color: "#666", marginLeft: "8px" }}>{formatTime(g.time)} · {g.venue}, {g.city}</span>
-                    </div>
-                    <div style={{ display: "flex", gap: "5px" }}>
-                      <Btn label="✓" onClick={() => onApprove(g.id)} accent />
-                      <Btn label="✕" onClick={() => onReject(g.id)} />
-                    </div>
-                  </div>
+                  <EditableShowRow key={g.id} gig={g} onApprove={onApprove} onReject={onReject} onEdit={onEdit} />
                 ))}
               </div>
             </div>
@@ -2052,6 +2104,11 @@ export default function App() {
     }
   };
 
+  const handleEdit = async (id, updates) => {
+    await supabase.from("shows").update(updates).eq("id", id);
+    setGigs(prev => prev.map(g => g.id === id ? { ...g, ...updates } : g));
+  };
+
   const handleCancel = async (id) => {
     await supabase.from("shows").update({ status: "cancelled" }).eq("id", id);
     setGigs(prev => prev.map(g => g.id === id ? { ...g, status: "cancelled" } : g));
@@ -2232,7 +2289,7 @@ export default function App() {
                   <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", color: "#FFF8EE" }}>Admin Panel</div>
                   <button onClick={() => { setAdminUnlocked(false); setAdminPass(""); }} style={{ background: "transparent", border: "1px solid #222", borderRadius: "2px", color: "#555", fontFamily: "'Courier Prime',monospace", fontSize: "10px", padding: "6px 12px", cursor: "pointer" }}>Lock</button>
                 </div>
-                <AdminPanel gigs={gigs} onApprove={handleApprove} onReject={handleReject} onDelete={handleDelete} onCancel={handleCancel} onMerge={handleMerge} onBatchApprove={handleBatchApprove} onAdminPost={handleAdminPost} onTrust={handleTrust} onUntrust={handleUntrust} trustedEmails={trustedEmails} />
+                <AdminPanel gigs={gigs} onApprove={handleApprove} onReject={handleReject} onDelete={handleDelete} onCancel={handleCancel} onMerge={handleMerge} onBatchApprove={handleBatchApprove} onAdminPost={handleAdminPost} onTrust={handleTrust} onUntrust={handleUntrust} trustedEmails={trustedEmails} onEdit={handleEdit} />
               </div>
             )}
           </div>
