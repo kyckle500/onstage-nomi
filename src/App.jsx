@@ -1976,20 +1976,17 @@ export default function App() {
     }
   };
 
-  const today = new Date().toISOString().split("T")[0];
   const now = new Date();
-  const approved = gigs.filter(g => {
-    if (g.status !== "approved" && g.status !== "cancelled") return false;
-    if (g.date > today) return true;
-    if (g.date < today) return false;
-    // Same day — keep visible until 1 hour after end time (or start time if no end)
-    const endStr = g.endTime || g.endtime || g.time;
-    if (!endStr) return true;
-    const [h, m] = endStr.split(":").map(Number);
-    const showEnd = new Date();
-    showEnd.setHours(h + 1, m, 0, 0);
-    return now < showEnd;
-  });
+  // Shows stay visible until 2am Eastern the next day
+  // Compare against yesterday's date if it's before 2am
+  const cutoff = new Date(now);
+  if (now.getHours() < 2) {
+    cutoff.setDate(cutoff.getDate() - 1);
+  }
+  const showDate = `${cutoff.getFullYear()}-${String(cutoff.getMonth()+1).padStart(2,"0")}-${String(cutoff.getDate()).padStart(2,"0")}`;
+  const approved = gigs.filter(g =>
+    (g.status === "approved" || g.status === "cancelled") && g.date >= showDate
+  );
   const pendingCount = gigs.filter(g => g.status === "pending").length;
   const flaggedCount = gigs.filter(g => g.status === "pending" && g.duplicateFlag).length;
 
