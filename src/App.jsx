@@ -1760,15 +1760,15 @@ On Stage NoMi isn't meant to replace venues, artists, social media, or existing 
           { icon: "🎵", label: "For Music Fans", body: `Browse upcoming performances by date, venue, or artist. Discover new musicians, find something happening tonight, and keep up with live music happening across the region.
 
 On your phone, tap "Add to Home Screen" from your browser to access it just like an app — no download required.` },
-          { icon: "🏠", label: "For Venues", body: `Promote your live music schedule and reach more local residents, visitors, and music lovers throughout Northern Michigan.
+          { icon: "🏠", label: "For Venues", body: `Get your shows in front of more people looking for live music around Northern Michigan.
 
 You can submit shows yourself or simply email me your schedule and I'll add them for you. No cost. No catch.` },
-          { icon: "🎸", label: "For Musicians and Booking Agents", body: `Share upcoming performances and help new audiences discover your music.
+          { icon: "🎸", label: "For Musicians and Booking Agents", body: `Add your upcoming shows so more people can find where you're playing.
 
 Whether you're posting a single show or an entire summer schedule, On Stage NoMi makes it easy.` },
           { icon: "🤘", label: "For Fans Who Want to Help", body: `You don't have to be a venue or musician to contribute. If you know about an upcoming show that isn't listed, submit it.
 
-We call these fans "Groupies" and they're a big part of what makes On Stage NoMi a community resource instead of just another directory.` },
+I call these fans "Groupies" and they're a big part of what makes On Stage NoMi a community resource instead of just another directory.` },
         ].map(({ icon, label, body }) => (
           <div key={label} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,200,80,0.12)", borderRadius: "3px", padding: "20px 24px", marginBottom: "14px", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: 0, left: 0, width: "3px", height: "100%", background: "linear-gradient(180deg,#FFC850,#FF6B35)" }} />
@@ -1798,7 +1798,6 @@ We call these fans "Groupies" and they're a big part of what makes On Stage NoMi
           <div style={{ width: "3px", height: "24px", background: "linear-gradient(180deg,#FFC850,#FF6B35)", borderRadius: "2px", flexShrink: 0 }} />
           <div style={{ fontFamily: "'Playfair Display',serif", fontSize: "22px", fontWeight: "700", color: "#FFF8EE" }}>Why Local Music Matters</div>
         </div>
-        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginBottom: "16px" }}>Northern Michigan is a special place.</p>
         <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginBottom: "16px" }}>People come here for the beaches, boating, golf, wineries, breweries, restaurants, festivals, and small-town charm. Live music is a big part of that experience.</p>
         {[
           "It's the musician playing on a winery patio in Leelanau County.",
@@ -1812,7 +1811,7 @@ We call these fans "Groupies" and they're a big part of what makes On Stage NoMi
           </div>
         ))}
         <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8, marginTop: "16px", marginBottom: "12px" }}>Live music supports local businesses. It gives artists a stage and helps create the experiences that make Northern Michigan unique.</p>
-        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8 }}>On Stage NoMi exists to help shine a spotlight on the musicians, venues, and communities that make our local music scene so special.</p>
+        <p style={{ fontFamily: "'Lora',serif", fontSize: "15px", color: "#bbb", lineHeight: 1.8 }}>That's really what On Stage NoMi is about. Helping people find the music that's already happening here and helping the musicians and venues putting it on.</p>
       </div>
 
       {/* Join the Community */}
